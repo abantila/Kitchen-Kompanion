@@ -1,0 +1,4623 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Kitchen Kompanion • Family Dashboard</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        /* Color system */
+        --bg-primary: #f8fafc;
+        --bg-gradient-start: #f1f5f9;
+        --card-bg: #ffffff;
+        --text-primary: #0f172a;
+        --text-secondary: #334155;
+        --text-tertiary: #475569;
+        --border-light: #e2e8f0;
+        --border-faint: rgba(226, 232, 240, 0.6);
+
+        /* Status colors */
+        --accent: #3b82f6;
+        --accent-light: #dbeafe;
+        --accent-soft: #d6e8ff;
+        --success: #22c55e;
+        --success-light: #dcfce7;
+        --warning: #f59e0b;
+        --warning-light: #fef3c7;
+        --danger: #ef4444;
+        --danger-light: #fee2e2;
+
+        /* Family member colors */
+        --member-blue: #3b82f6;
+        --member-blue-bg: #dbeafe;
+        --member-purple: #a855f7;
+        --member-purple-bg: #f3e8ff;
+        --member-green: #22c55e;
+        --member-green-bg: #dcfce7;
+        --member-orange: #f97316;
+        --member-orange-bg: #ffedd5;
+
+        /* Spacing */
+        --space-xs: 4px;
+        --space-sm: 8px;
+        --space-md: 12px;
+        --space-lg: 16px;
+        --space-xl: 20px;
+        --space-2xl: 24px;
+
+        /* Effects */
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+
+        /* Typography */
+        --font-sans:
+          "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        --font-size-xs: 0.8125rem;
+        --font-size-sm: 0.9375rem;
+        --font-size-md: 1.0625rem;
+        --font-size-lg: 1.1875rem;
+        --font-size-xl: 1.375rem;
+        --font-size-2xl: 1.625rem;
+
+        /* Borders */
+        --radius-md: 10px;
+        --radius-lg: 16px;
+        --radius-xl: 20px;
+        --radius-full: 9999px;
+      }
+
+      body {
+        background: linear-gradient(145deg, #e2e8f0 0%, #f1f5f9 100%);
+        font-family: var(--font-sans);
+        color: var(--text-primary);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        padding: var(--space-lg);
+        line-height: 1.5;
+      }
+
+      /* Phone frame */
+      .phone-frame {
+        width: 640px;
+        max-width: 100%;
+        background: #1e293b;
+        border-radius: 42px;
+        padding: 12px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      }
+
+      .screen {
+        background: var(--bg-primary);
+        border-radius: 32px;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 960px;
+        position: relative;
+      }
+
+      .screen.screen-scroll-enabled {
+        overflow-y: auto;
+        overscroll-behavior: contain;
+      }
+
+      /* Header */
+      .header {
+        padding: var(--space-lg) var(--space-lg) var(--space-md);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: white;
+        border-bottom: 1px solid var(--border-light);
+        z-index: 10;
+      }
+
+      .brand h1 {
+        font-size: var(--font-size-2xl);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: var(--text-primary);
+        line-height: 1.2;
+      }
+
+      .brand .household-badge {
+        font-size: var(--font-size-sm);
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 2px;
+      }
+
+      .household-badge span {
+        background: var(--accent-soft);
+        color: var(--accent);
+        padding: 3px 9px;
+        border-radius: var(--radius-full);
+        font-weight: 600;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+      }
+
+      .icon-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-md);
+        background: var(--bg-primary);
+        border: 1px solid var(--border-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        color: var(--text-secondary);
+      }
+
+      .alert-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        width: 18px;
+        height: 18px;
+        background: var(--danger);
+        border: 2px solid white;
+        border-radius: var(--radius-full);
+        font-size: 13px;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+
+      .bell-icon {
+        width: 20px;
+        height: 20px;
+        position: relative;
+      }
+
+      .bell-icon::before {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 3px;
+        width: 12px;
+        height: 12px;
+        border: 2px solid currentColor;
+        border-bottom: none;
+        border-radius: 12px 12px 0 0;
+      }
+
+      .bell-icon::after {
+        content: "";
+        position: absolute;
+        bottom: 1px;
+        left: 6px;
+        width: 6px;
+        height: 2px;
+        background: currentColor;
+        border-radius: 2px;
+      }
+
+      i.bi.bi-bell {
+        font-size: 25px;
+      }
+
+      .avatar-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-full);
+        background: linear-gradient(135deg, #f59e0b, #f97316);
+        border: 2px solid white;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: var(--font-size-md);
+      }
+
+      /* Main content */
+      .main-content {
+        flex: 1 0 auto;
+        padding: 0 var(--space-lg) 100px;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-lg);
+        min-height: 0;
+      }
+
+      /* Welcome section */
+      .welcome-section {
+        margin-top: var(--space-md);
+      }
+
+      .welcome-title {
+        font-size: var(--font-size-xl);
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+
+      .welcome-subtitle {
+        font-size: var(--font-size-sm);
+        color: var(--text-secondary);
+        font-weight: 520;
+      }
+
+      .home-card .card-header {
+        border-bottom-width: 1px;
+      }
+
+      .home-card .card-header h2 {
+        text-transform: none;
+        letter-spacing: -0.02em;
+      }
+
+      .home-card .card-header .from-recipes-link {
+        font-size: var(--font-size-sm);
+        font-weight: 600;
+        color: var(--text-tertiary);
+        background: var(--accent-light);
+        padding: 4px 10px;
+        border-radius: var(--radius-full);
+      }
+
+      .household-summary {
+        padding: var(--space-md) var(--space-lg) var(--space-lg);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+      }
+
+      .member-preview {
+        display: flex;
+        gap: var(--space-2xl);
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .member-mini {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .member-mini-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: var(--radius-full);
+        background: var(--accent-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+      }
+
+      .member-mini-name {
+        font-size: var(--font-size-md);
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+
+      .dietary-row {
+        padding-top: var(--space-xs);
+        border-top: 1px dashed var(--border-light);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-sm);
+      }
+
+      .dietary-label {
+        font-size: var(--font-size-md);
+        font-weight: 500;
+        color: var(--text-secondary);
+      }
+
+      .dietary-value {
+        font-size: var(--font-size-md);
+        font-weight: 600;
+        color: var(--text-primary);
+        text-align: right;
+      }
+
+      .meal-thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .family-fit {
+        display: flex;
+        gap: var(--space-sm);
+        margin-top: var(--space-xs);
+        margin-bottom: var(--space-md);
+      }
+
+      .fit-indicator {
+        width: 34px;
+        height: 34px;
+        border-radius: var(--radius-full);
+        background: var(--success-light);
+        color: #166534;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: 700;
+        border: 1px solid #86efac;
+      }
+
+      .fit-indicator.warning {
+        background: var(--warning-light);
+        border-color: #fde68a;
+        color: #92400e;
+      }
+
+      .btn-view-recipe {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 14px var(--space-md);
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: var(--font-size-md);
+        width: 100%;
+        margin-top: var(--space-md);
+        cursor: pointer;
+        transition: all 0.1s ease;
+        min-height: 52px;
+      }
+
+      .btn-view-recipe:active {
+        background: #2563eb;
+        transform: scale(0.98);
+      }
+
+      .icon-btn,
+      .avatar-btn {
+        cursor: pointer;
+        transition:
+          transform 0.1s ease,
+          background 0.1s ease;
+      }
+
+      .icon-btn:active,
+      .avatar-btn:active {
+        transform: scale(0.95);
+      }
+
+      .notification-modal {
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        backdrop-filter: blur(4px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+      }
+
+      .notification-modal.active {
+        display: flex;
+      }
+
+      .notification-container {
+        background: white;
+        border-radius: 28px;
+        width: 85%;
+        max-width: 320px;
+        overflow: hidden;
+        box-shadow: var(--shadow-lg);
+        transform: scale(0.95);
+        transition: transform 0.2s ease;
+      }
+
+      .notification-modal.active .notification-container {
+        transform: scale(1);
+      }
+
+      .notification-header {
+        padding: var(--space-lg) var(--space-lg) var(--space-sm);
+        border-bottom: 1px solid var(--border-light);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .notification-header h3 {
+        font-size: var(--font-size-lg);
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .notification-close {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-full);
+        background: var(--bg-primary);
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+      }
+
+      .notification-close:active {
+        background: var(--border-light);
+      }
+
+      .notification-content {
+        padding: var(--space-lg);
+      }
+
+      .notification-item {
+        display: flex;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border-light);
+      }
+
+      .notification-item:last-child {
+        border-bottom: none;
+      }
+
+      .notification-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-full);
+        background: var(--accent-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+
+      .notification-icon.warning {
+        background: var(--warning-light);
+      }
+
+      .notification-icon.danger {
+        background: var(--danger-light);
+      }
+
+      .notification-text {
+        flex: 1;
+      }
+
+      .notification-title {
+        font-weight: 700;
+        font-size: var(--font-size-md);
+        margin-bottom: 4px;
+      }
+
+      .notification-desc {
+        font-size: var(--font-size-sm);
+        color: var(--text-secondary);
+      }
+
+      .notification-time {
+        font-size: var(--font-size-xs);
+        color: var(--text-tertiary);
+        margin-top: 4px;
+      }
+
+      .notification-footer {
+        padding: var(--space-md) var(--space-lg) var(--space-lg);
+        border-top: 1px solid var(--border-light);
+      }
+
+      .mark-read-btn {
+        width: 100%;
+        background: var(--accent-light);
+        border: none;
+        padding: 12px;
+        border-radius: var(--radius-full);
+        font-weight: 600;
+        font-size: var(--font-size-sm);
+        color: var(--accent);
+        cursor: pointer;
+      }
+
+      .mark-read-btn:active {
+        background: var(--accent-soft);
+      }
+
+      .home-card .card-header {
+        border-bottom-width: 1px;
+      }
+
+      .home-card .card-header h2 {
+        text-transform: none;
+        letter-spacing: -0.02em;
+      }
+
+      .home-card .card-header .from-recipes-link {
+        font-size: var(--font-size-sm);
+        font-weight: 600;
+        color: var(--text-tertiary);
+        background: var(--accent-light);
+        padding: 4px 10px;
+        border-radius: var(--radius-full);
+      }
+
+      .household-summary {
+        padding: var(--space-md) var(--space-lg) var(--space-lg);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+      }
+
+      .member-preview {
+        display: flex;
+        gap: var(--space-2xl);
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .member-mini {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .member-mini-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: var(--radius-full);
+        background: var(--accent-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+      }
+
+      .member-mini-name {
+        font-size: var(--font-size-md);
+        font-weight: 600;
+        color: var(--text-secondary);
+      }
+
+      .dietary-row {
+        padding-top: var(--space-xs);
+        border-top: 1px dashed var(--border-light);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-sm);
+      }
+
+      .dietary-label {
+        font-size: var(--font-size-md);
+        font-weight: 500;
+        color: var(--text-secondary);
+      }
+
+      .dietary-value {
+        font-size: var(--font-size-md);
+        font-weight: 500;
+        color: var(--text-primary);
+        text-align: right;
+      }
+
+      .meal-thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .family-fit {
+        display: flex;
+        gap: var(--space-sm);
+        margin-top: var(--space-xs);
+        margin-bottom: var(--space-md);
+      }
+
+      .fit-indicator {
+        width: 34px;
+        height: 34px;
+        border-radius: var(--radius-full);
+        background: var(--success-light);
+        color: #166534;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: 700;
+        border: 1px solid #86efac;
+      }
+
+      .fit-indicator.warning {
+        background: var(--warning-light);
+        border-color: #fde68a;
+        color: #92400e;
+      }
+
+      .btn-view-recipe {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 14px var(--space-md);
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: var(--font-size-sm);
+        width: 100%;
+        margin-top: var(--space-md);
+        cursor: pointer;
+        transition: all 0.1s ease;
+        min-height: 52px;
+      }
+
+      .btn-view-recipe:active {
+        background: #2563eb;
+        transform: scale(0.98);
+      }
+
+
+      /* Card styles */
+      .card {
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        border: 2px solid var(--border-light);
+        box-shadow: var(--shadow-md);
+        overflow: hidden;
+      }
+
+      .card-header {
+        padding: var(--space-md) var(--space-lg);
+        background: var(--bg-primary);
+        border-bottom: 3px solid var(--border-light);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .card-header h2 {
+        font-size: var(--font-size-lg);
+        font-weight: 700;
+        color: var(--text-primary);
+        letter-spacing: 0.2px;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .household-indicator {
+        background: var(--accent);
+        color: white;
+        font-size: 14px;
+        padding: 3px 8px;
+        border-radius: var(--radius-full);
+        font-weight: 600;
+        display: inline-block;
+        white-space: nowrap;
+      }
+
+      .expand-btn {
+        background: none;
+        border: none;
+        color: var(--accent);
+        font-size: var(--font-size-sm);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        cursor: default;
+        padding: 4px 8px;
+        border-radius: var(--radius-full);
+        background: #e6f2fb;
+      }
+
+      .chevron {
+        width: 8px;
+        height: 8px;
+        border-right: 2px solid currentColor;
+        border-bottom: 2px solid currentColor;
+        transform: rotate(45deg);
+        margin-top: -2px;
+      }
+
+      .chevron.up {
+        transform: rotate(-135deg);
+        margin-top: 2px;
+      }
+
+      /* Family member list (expanded view - showing 2 members) */
+      .family-list {
+        padding: var(--space-md);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-md);
+      }
+
+      .family-member {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-sm);
+        background: var(--bg-primary);
+        border-radius: var(--radius-md);
+        border: 2px solid var(--border-light);
+        margin-top: 10px;
+      }
+
+      .member-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        font-size: var(--font-size-sm);
+        flex-shrink: 0;
+      }
+
+      .member-avatar.adult {
+        background: var(--member-blue-bg);
+        color: var(--member-blue);
+      }
+      .member-avatar.teen {
+        background: var(--member-purple-bg);
+        color: var(--member-purple);
+      }
+      .member-avatar.child {
+        background: var(--member-green-bg);
+        color: var(--member-green);
+      }
+      .member-avatar.senior {
+        background: var(--member-orange-bg);
+        color: var(--member-orange);
+      }
+
+      .member-details {
+        flex: 1;
+      }
+
+      .member-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+      }
+
+      .member-name {
+        font-weight: 600;
+        font-size: var(--font-size-sm);
+      }
+
+      .member-age {
+        font-size: var(--font-size-sm);
+        color: var(--text-secondary);
+        font-weight: 500;
+      }
+
+      .member-stats {
+        display: flex;
+        gap: var(--space-sm);
+        font-size: var(--font-size-sm);
+        margin-bottom: 6px;
+        flex-wrap: wrap;
+      }
+
+      .stat {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .stat-value {
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .stat-label {
+        color: var(--text-secondary);
+        font-weight: 500;
+        font-size: var(--font-size-sm);
+      }
+
+      /* Progress rows */
+      .progress-row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--space-xs);
+      }
+
+      .progress-bar {
+        height: 6px;
+        background: #eef2f6;
+        border-radius: var(--radius-full);
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        border-radius: var(--radius-full);
+      }
+
+      .progress-fill.blue {
+        background: linear-gradient(90deg, var(--member-blue), #93c5fd);
+      }
+      .progress-fill.purple {
+        background: linear-gradient(90deg, var(--member-purple), #d8b4fe);
+      }
+      .progress-fill.green {
+        background: linear-gradient(90deg, var(--member-green), #86efac);
+      }
+      .progress-fill.orange {
+        background: linear-gradient(90deg, var(--member-orange), #fdba74);
+      }
+
+      /* See all members pill */
+      .see-all-members {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-xs);
+        padding: var(--space-sm) var(--space-md);
+        background: var(--bg-primary);
+        border: 3px dashed var(--border-light);
+        border-radius: var(--radius-full);
+        margin: 0 var(--space-md) var(--space-md);
+        color: var(--accent);
+        font-size: var(--font-size-sm);
+        font-weight: 600;
+      }
+
+      .member-avatars {
+        display: flex;
+        align-items: center;
+      }
+
+      .mini-avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: var(--radius-full);
+        background: var(--accent-soft);
+        border: 2px solid white;
+        margin-left: -4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        color: var(--accent);
+        font-weight: 600;
+      }
+
+      .mini-avatar:first-child {
+        margin-left: 0;
+      }
+
+      .family-member.extra-member {
+        display: none;
+      }
+
+      .nutrition-section.show-all .family-member.extra-member {
+        display: flex;
+      }
+
+      .see-all-members {
+        cursor: pointer;
+        user-select: none;
+        transition:
+          background 0.2s ease,
+          border-color 0.2s ease;
+      }
+
+      .see-all-members:hover {
+        background: #eef6ff;
+        border-color: #bfd8ff;
+      }
+
+      .see-all-members .toggle-label-alt {
+        display: none;
+      }
+
+      .nutrition-section.show-all .see-all-members .toggle-label-default,
+      .nutrition-section.show-all .see-all-members .member-avatars {
+        display: none;
+      }
+
+      .nutrition-section.show-all .see-all-members .toggle-label-alt {
+        display: inline;
+      }
+
+      .see-all-members .toggle-label-default,
+      .see-all-members .toggle-label-alt {
+        pointer-events: none;
+      }
+
+      .nutrition-section.show-all .see-all-members .chevron {
+        transform: rotate(-135deg) !important;
+        margin-top: 2px !important;
+      }
+
+      /* Alert chip (simplified) */
+      .alert-chip {
+        background: var(--danger-light);
+        border: 0.9px solid #991b1b;
+        border-radius: var(--radius-full);
+        padding: var(--space-xs) var(--space-md);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: var(--font-size-sm);
+        color: #991b1b;
+        width: fit-content;
+        font-weight: 600;
+      }
+
+      .alert-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--danger);
+        border-radius: var(--radius-full);
+      }
+
+      /* Meal card */
+      .meal-card {
+        padding: var(--space-lg);
+      }
+
+      .meal-container {
+        display: flex;
+        gap: var(--space-lg);
+      }
+
+      .meal-thumbnail {
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(145deg, #f1f5f9, #e2e8f0);
+        border-radius: 10px;
+        overflow: hidden;           /* Add this - crucial for rounding corners of content */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border: 1px solid var(--border-light);
+      }
+
+      .meal-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;          /* Ensures image fills area without distortion */
+      display: block;             /* Removes extra spacing below image */
+      }
+
+      .plate-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-full);
+        border: 2px solid var(--text-secondary);
+        opacity: 0.8;
+      }
+
+      .meal-details {
+        flex: 1;
+      }
+
+      .meal-name {
+        font-weight: 700;
+        font-size: var(--font-size-lg);
+        margin-bottom: 4px;
+      }
+
+      .meal-meta {
+        display: flex;
+        font-size: var(--font-size-md);
+        color: var(--text-secondary);
+        font-weight: 509;
+        margin-bottom: var(--space-sm);
+        flex-wrap: wrap;
+      }
+
+      .meal-meta > span {
+        margin-right: 15px;
+      }
+
+      .emo-size {
+        font-size: 23px;
+      }
+
+      .family-fit {
+        display: flex;
+        gap: var(--space-xs);
+        margin-top: var(--space-xs);
+      }
+
+      .fit-indicator {
+        width: 30px;
+        height: 30px;
+        border-radius: var(--radius-full);
+        background: var(--success-light);
+        color: #166534;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+        font-weight: 600;
+        border: 0.5px solid #1f8e48;
+      }
+
+      .fit-indicator.warning {
+        background: var(--warning-light);
+        border: 0.5px solid #bc7b0a;
+        color: #92400e;
+      }
+
+      .fit-indicator.emergancy {
+        background: red;
+        color: #92400e;
+      }
+
+      /* Button */
+      .btn-primary {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: var(--space-md);
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: var(--font-size-sm);
+        width: 100%;
+        margin-top: var(--space-md);
+        cursor: default;
+      }
+
+      /* Cooking screen */
+      .cooking-screen {
+        position: absolute;
+        inset: 0;
+        background: var(--bg-primary);
+        z-index: 20;
+        display: none;
+        flex-direction: column;
+        padding: var(--space-lg);
+        overflow-y: auto;
+        padding-bottom: 120px;
+      }
+
+      .cooking-screen.active {
+        display: flex;
+      }
+
+      .cooking-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--space-lg);
+      }
+
+      .back-btn {
+        border: 1px solid var(--border-light);
+        background: white;
+        color: var(--text-primary);
+        padding: 10px 14px;
+        border-radius: var(--radius-full);
+        box-shadow: var(--shadow-sm);
+        cursor: pointer;
+        font: inherit;
+      }
+
+      .cooking-badge {
+        background: var(--accent-soft);
+        color: var(--accent);
+        padding: 6px 12px;
+        border-radius: var(--radius-full);
+        font: inherit;
+      }
+
+      .cooking-hero {
+        background: white;
+        border: 2px solid var(--border-light);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        padding: var(--space-lg);
+        display: flex;
+        gap: var(--space-lg);
+        margin-bottom: var(--space-lg);
+      }
+
+      .cooking-image-holder {
+        width: 110px;
+        height: 110px;
+        border-radius: 22px;
+        background: linear-gradient(145deg, #f1f5f9, #e2e8f0);
+        border: 2px dashed #94a3b8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+        flex-shrink: 0;
+        text-align: center;
+        padding: 10px;
+      }
+
+      .cooking-hero-text h2 {
+        margin-bottom: 4px;
+      }
+
+      .cooking-hero-text p {
+        color: var(--text-secondary);
+        margin-bottom: var(--space-md);
+      }
+
+      .cooking-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        color: var(--text-secondary);
+      }
+
+      .cooking-card {
+        background: white;
+        border: 2px solid var(--border-light);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        padding: var(--space-lg);
+        margin-bottom: var(--space-lg);
+      }
+
+      .cooking-card h3 {
+        margin-bottom: var(--space-md);
+      }
+
+      .ingredient-list,
+      .step-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .ingredient-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--bg-primary);
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        padding: 12px 14px;
+        gap: 12px;
+      }
+
+      .ingredient-name {
+        font-weight: 600;
+      }
+
+      .ingredient-amount {
+        color: var(--text-secondary);
+      }
+
+      .step-item {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        background: var(--bg-primary);
+        border: 1px solid var(--border-light);
+        border-radius: 14px;
+        padding: 14px;
+      }
+
+      .step-number {
+        width: 30px;
+        height: 30px;
+        border-radius: 9999px;
+        background: var(--accent);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+
+      .step-text strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .step-text p {
+        color: var(--text-secondary);
+        margin: 0;
+      }
+
+      .tab-panel {
+        display: none;
+      }
+
+      .tab-panel.active {
+        display: flex;
+      }
+
+      .inventory-hero {
+        margin-top: var(--space-md);
+      }
+
+      .inventory-subtitle {
+        font-size: var(--font-size-sm);
+        color: var(--text-secondary);
+      }
+
+      .inventory-toolbar {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: var(--space-sm);
+        align-items: center;
+      }
+
+      .inventory-search {
+        width: 100%;
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        background: white;
+        padding: 10px 12px;
+        font: inherit;
+      }
+
+      .inventory-add-btn {
+        border: none;
+        background: var(--accent);
+        color: white;
+        border-radius: 12px;
+        padding: 10px 14px;
+        font-weight: 700;
+        font-size: var(--font-size-sm);
+        cursor: pointer;
+      }
+
+      .inventory-filters {
+        display: flex;
+        gap: var(--space-xs);
+        flex-wrap: wrap;
+      }
+
+      .filter-chip {
+        border: 1px solid var(--border-light);
+        background: white;
+        color: var(--text-secondary);
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .filter-chip.active {
+        border-color: #bfdbfe;
+        background: #e6f2ff;
+        color: #1d4ed8;
+      }
+
+      .inventory-metrics {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-sm);
+      }
+
+      .metric-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-md);
+        padding: var(--space-md);
+      }
+
+      .metric-card.metric-total {
+        background: #eff6ff;
+        border-color: #bfdbfe;
+      }
+
+      .metric-card.metric-low {
+        background: #fff7ed;
+        border-color: #fed7aa;
+      }
+
+      .shopping-pickups-header {
+        background: #f5f3ff;
+        border-bottom-color: #ddd6fe;
+      }
+
+      .shopping-pickups-header h2 {
+        color: #4c1d95;
+      }
+
+      .metric-label {
+        display: block;
+        color: var(--text-secondary);
+        font-size: 0.8rem;
+        margin-bottom: 4px;
+      }
+
+      .metric-value {
+        font-size: var(--font-size-lg);
+        font-weight: 700;
+      }
+
+      .inventory-form {
+        padding: var(--space-lg);
+        display: grid;
+        gap: var(--space-sm);
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1.3fr 0.8fr 0.9fr;
+        gap: var(--space-sm);
+      }
+
+      .input-control {
+        width: 100%;
+        border: 1px solid var(--border-light);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font: inherit;
+        color: var(--text-primary);
+        background: white;
+      }
+
+      .inventory-form-actions {
+        display: flex;
+        gap: var(--space-sm);
+      }
+
+      .btn-secondary {
+        background: white;
+        color: var(--text-primary);
+        border: 1px solid var(--border-light);
+        padding: var(--space-md);
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: var(--font-size-sm);
+        width: 100%;
+        cursor: pointer;
+      }
+
+      .inventory-groups {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+      }
+
+      .inventory-item-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .inventory-item {
+        border: 1px solid var(--border-light);
+        border-radius: 10px;
+        padding: 8px 10px;
+        display: block;
+        background: #f8fafc;
+      }
+
+      .inventory-item-main {
+        min-width: 0;
+      }
+
+      .inventory-item-name {
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+
+      .inventory-item-meta {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+      }
+
+      .inventory-status-row {
+        display: flex;
+        gap: 6px;
+        margin-top: 4px;
+        flex-wrap: wrap;
+      }
+
+      .mini-badge {
+        background: #e2e8f0;
+        color: #334155;
+        border-radius: 999px;
+        padding: 2px 8px;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+
+      .mini-badge.low {
+        background: #fff7ed;
+        color: #9a3412;
+        border: 1px solid #fed7aa;
+      }
+
+      .inventory-item-actions {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        margin-top: 8px;
+      }
+
+      .qty-stepper {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid var(--border-light);
+        background: white;
+        border-radius: 999px;
+      }
+
+      .stepper-btn {
+        border: none;
+        background: transparent;
+        width: 28px;
+        height: 28px;
+        font-size: 1rem;
+        color: var(--text-primary);
+        cursor: pointer;
+      }
+
+      .stepper-value {
+        min-width: 26px;
+        text-align: center;
+        font-size: 0.85rem;
+        font-weight: 700;
+      }
+
+      .inventory-editor {
+        display: none;
+      }
+
+      .inventory-editor.show {
+        display: block;
+      }
+
+      .inventory-inline-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-sm);
+      }
+
+      .inventory-delete {
+        width: 100%;
+        border: 1px solid #fecaca;
+        background: #fff1f2;
+        color: #b91c1c;
+        border-radius: 10px;
+        padding: 10px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .inventory-add-panel {
+        display: none;
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        padding: var(--space-sm);
+        background: white;
+      }
+
+      .inventory-add-panel.show {
+        display: block;
+      }
+
+      .inventory-inline-actions {
+        display: flex;
+        gap: 6px;
+      }
+
+      .inline-edit-area {
+        display: none;
+        margin-top: 8px;
+        border-top: 1px dashed var(--border-light);
+        padding-top: 8px;
+        width: 100%;
+      }
+
+      .inline-edit-area.show {
+        display: block;
+      }
+
+      .icon-pencil-btn {
+        border: none;
+        background: transparent;
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        cursor: pointer;
+      }
+
+      .pickup-btn {
+        border: none;
+        background: transparent;
+        width: 40px;
+        height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        cursor: pointer;
+      }
+
+      .action-icon {
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+        display: block;
+      }
+
+      .chip-btn {
+        border: 1px solid var(--border-light);
+        background: white;
+        color: var(--text-primary);
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .chip-btn.danger {
+        color: #b91c1c;
+        border-color: #fecaca;
+        background: #fff1f2;
+      }
+
+      .empty-state {
+        color: var(--text-secondary);
+        font-size: var(--font-size-sm);
+      }
+
+      .shopping-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);
+        padding: var(--space-lg);
+      }
+
+      .shopping-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-sm);
+        background: var(--bg-primary);
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        padding: 10px 12px;
+      }
+
+      .shopping-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-sm);
+        width: 100%;
+      }
+
+      .shopping-item label {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        width: auto;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .shopping-item-main {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .shopping-add-toggle {
+        border: 1px solid var(--border-light);
+        background: white;
+        color: var(--text-primary);
+        border-radius: 10px;
+        padding: 8px 10px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .shopping-add-panel {
+        display: none;
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        padding: var(--space-sm);
+        background: white;
+      }
+
+      .shopping-add-panel.show {
+        display: block;
+      }
+
+      .shopping-delete-btn {
+        border: none;
+        background: transparent;
+        color: #b91c1c;
+        font-size: 1.1rem;
+        font-weight: 700;
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        cursor: pointer;
+        margin-left: auto;
+      }
+
+      .shopping-item.checked {
+        opacity: 0.65;
+      }
+
+      .shopping-item.checked strong {
+        text-decoration: line-through;
+      }
+
+      .status-banner {
+        margin: 0 var(--space-lg);
+        margin-top: var(--space-md);
+        padding: 10px 12px;
+        border-radius: 10px;
+        font-size: var(--font-size-sm);
+        font-weight: 600;
+        display: none;
+      }
+
+      .status-banner.show {
+        display: block;
+      }
+
+      .status-banner.info {
+        background: #e6f2ff;
+        color: #1d4ed8;
+        border: 1px solid #bfdbfe;
+      }
+
+      .status-banner.success {
+        background: #ecfdf3;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+      }
+
+      .status-banner.warning {
+        background: #fffbeb;
+        color: #92400e;
+        border: 1px solid #fde68a;
+      }
+
+      /* Navigation */
+      .bottom-nav {
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(8px);
+        border-top: 1px solid var(--border-light);
+        padding: var(--space-sm) var(--space-lg) var(--space-lg);
+        display: flex;
+        justify-content: space-around;
+        box-shadow: -1px -2px 25px 0px rgba(0, 0, 0, 0.1);
+        -webkit-box-shadow: -1px -2px 25px 0px rgba(0, 0, 0, 0.1);
+        -moz-box-shadow: -1px -2px 25px 0px rgba(0, 0, 0, 0.1);
+        z-index: 100;
+      }
+
+      i {
+        font-style: normal;
+      }
+
+      .icon-rav {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        font-weight: bold;
+      }
+
+      .nav-item-tab {
+        border: none;
+        background: transparent;
+        color: var(--text-secondary);
+        border-radius: var(--radius-md);
+        padding: 0;
+        cursor: pointer;
+      }
+
+      .nav-item-tab.active {
+        color: var(--accent);
+      }
+
+      i.icon-nav {
+        font-size: 40px;
+      }
+
+      .nav-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-xs);
+      }
+
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        padding: var(--space-sm);
+        border-radius: var(--radius-md);
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 500;
+        text-decoration: none;
+      }
+
+      .nav-item.active {
+        color: var(--accent);
+      }
+
+      .nav-icon {
+        width: 40px;
+        height: 40px;
+        position: relative;
+      }
+
+      .nav-icon.home::before {
+        content: "🏠";
+        font-size: 40px;
+      }
+      .nav-icon.recipes::before {
+        content: "📖";
+        font-size: 40px;
+      }
+      .nav-icon.inventory::before {
+        content: "📦";
+        font-size: 40px;
+      }
+      .nav-icon.account::before {
+        content: "👤";
+        font-size: 40px;
+      }
+
+      /* For screenshot - showing expanded view with 2 members */
+      .nutrition-section.expanded .family-list {
+        display: block;
+      }
+
+      /* ── Nav tab active state ── */
+      .nav-tab {
+        cursor: pointer;
+        user-select: none;
+        transition: color 0.15s ease;
+        color: var(--text-tertiary);
+        opacity: 0.6;
+      }
+      .nav-tab.active-tab {
+        opacity: 1;
+        color: var(--accent);
+      }
+      .nav-tab.active-tab span {
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      /* ── Family Screen ── */
+      .family-screen {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0px;
+        background: var(--bg-primary);
+        z-index: 200;
+        overflow-y: auto;
+        padding: 0 var(--space-lg) var(--space-lg);
+      }
+
+      .family-screen.family-screen-active {
+        display: flex;
+      }
+
+      .family-screen-back-bar {
+        position: sticky;
+        top: 0;
+        background: var(--bg-primary);
+        padding: var(--space-md) 0 var(--space-sm);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 5;
+        border-bottom: 1px solid var(--border-light);
+        margin-bottom: var(--space-md);
+      }
+
+      .family-screen-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: var(--space-lg);
+      }
+
+      .family-screen-title {
+        font-size: var(--font-size-md);
+        font-weight: 700;
+        color: var(--text-primary);
+        letter-spacing: -0.01em;
+      }
+
+      .add-member-btn {
+        background: var(--accent);
+        color: white;
+        border: none;
+        border-radius: var(--radius-full);
+        padding: 7px 14px;
+        font-size: var(--font-size-xs);
+        font-weight: 700;
+        font-family: var(--font-sans);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .family-screen-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-lg);
+      }
+
+      /* Family member card */
+      .fcard {
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        border: 2px solid var(--border-light);
+        box-shadow: var(--shadow-md);
+        padding: var(--space-lg);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm);
+      }
+
+      .fcard-top {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+      }
+
+      .fcard-avatar.adult-av {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-md);
+        background: var(--member-blue-bg);
+        color: var(--member-blue);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: var(--font-size-sm);
+        flex-shrink: 0;
+      }
+
+      .fcard-identity {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .fcard-name-row {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+      }
+
+      .fcard-name {
+        font-size: var(--font-size-md);
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .fcard-role-badge.adult-badge {
+        background: var(--member-blue-bg);
+        color: var(--member-blue);
+        padding: 3px 9px;
+        border-radius: var(--radius-full);
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .fcard-age {
+        font-size: var(--font-size-xs);
+        color: var(--text-tertiary);
+        font-weight: 500;
+      }
+
+      .fcard-edit-btn {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-md);
+        padding: 6px 9px;
+        font-size: 14px;
+        cursor: pointer;
+        color: var(--text-secondary);
+        line-height: 1;
+      }
+
+      .fcard-divider {
+        height: 1px;
+        background: var(--border-light);
+        margin: var(--space-xs) 0;
+      }
+
+      .fcard-section-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text-tertiary);
+        margin-bottom: 4px;
+      }
+
+      .fcard-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-xs);
+      }
+
+      .ftag {
+        padding: 4px 10px;
+        border-radius: var(--radius-full);
+        font-size: var(--font-size-xs);
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .ftag-danger {
+        background: var(--danger-light);
+        color: #991b1b;
+        border: 1px solid #fca5a5;
+      }
+
+      .ftag-warning {
+        background: var(--warning-light);
+        color: #92400e;
+        border: 1px solid #fcd34d;
+      }
+
+      .ftag-neutral {
+        background: var(--bg-primary);
+        color: var(--text-secondary);
+        border: 1px solid var(--border-light);
+      }
+
+      .ftag-info {
+        background: var(--accent-light);
+        color: #1e40af;
+        border: 1px solid #93c5fd;
+      }
+
+      .fcard-nutrition-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--bg-primary);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-md);
+        padding: var(--space-sm) var(--space-md);
+        margin-top: var(--space-xs);
+      }
+
+      .fcard-nutr-label {
+        font-size: var(--font-size-xs);
+        color: var(--text-tertiary);
+        font-weight: 500;
+      }
+
+      .fcard-nutr-value {
+        font-size: var(--font-size-xs);
+        font-weight: 700;
+        color: var(--accent);
+      }
+
+      /* fcard avatar box (dynamic, replaces old static class) */
+      .fcard-avatar-box {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        flex-shrink: 0;
+      }
+
+      /* ── Modal overlay ── */
+      .modal-overlay {
+        display: none;
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.45);
+        z-index: 300;
+        align-items: flex-end;
+        justify-content: center;
+      }
+      .modal-overlay.modal-open {
+        display: flex;
+      }
+
+      .modal-sheet {
+        background: #fff;
+        border-radius: 24px 24px 0 0;
+        width: 100%;
+        max-height: 88%;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.15);
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--space-md) var(--space-lg);
+        border-bottom: 1px solid var(--border-light);
+        flex-shrink: 0;
+      }
+
+      .modal-title {
+        font-size: var(--font-size-md);
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .modal-cancel-btn {
+        background: none;
+        border: none;
+        color: var(--text-tertiary);
+        font-size: var(--font-size-sm);
+        font-weight: 600;
+        font-family: var(--font-sans);
+        cursor: pointer;
+        padding: 4px 0;
+      }
+
+      .modal-save-btn {
+        background: var(--accent);
+        color: white;
+        border: none;
+        border-radius: var(--radius-full);
+        padding: 6px 16px;
+        font-size: var(--font-size-sm);
+        font-weight: 700;
+        font-family: var(--font-sans);
+        cursor: pointer;
+      }
+
+      .modal-body {
+        overflow-y: auto;
+        padding: var(--space-lg);
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+        padding-bottom: 32px;
+      }
+
+      .modal-section-label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text-tertiary);
+        margin-top: var(--space-md);
+        margin-bottom: 6px;
+      }
+
+      .modal-section-label:first-child {
+        margin-top: 0;
+      }
+
+      .modal-hint {
+        font-size: 10px;
+        text-transform: none;
+        font-weight: 500;
+        letter-spacing: 0;
+        color: var(--text-tertiary);
+        opacity: 0.8;
+      }
+
+      .modal-input {
+        width: 100%;
+        border: 1.5px solid var(--border-light);
+        border-radius: var(--radius-md);
+        padding: 10px 12px;
+        font-size: var(--font-size-sm);
+        font-family: var(--font-sans);
+        color: var(--text-primary);
+        background: var(--bg-primary);
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      .modal-input:focus {
+        border-color: var(--accent);
+        background: #fff;
+      }
+
+      /* Avatar picker */
+      .avatar-picker {
+        display: flex;
+        gap: var(--space-sm);
+        flex-wrap: wrap;
+      }
+
+      .avatar-opt {
+        width: 44px;
+        height: 44px;
+        border-radius: var(--radius-md);
+        border: 2px solid var(--border-light);
+        background: var(--bg-primary);
+        font-size: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition:
+          border-color 0.15s,
+          background 0.15s;
+      }
+      .avatar-opt.selected {
+        border-color: var(--accent);
+        background: var(--accent-light);
+      }
+
+      /* Role picker */
+      .role-picker {
+        display: flex;
+        gap: var(--space-sm);
+        flex-wrap: wrap;
+      }
+
+      .role-opt {
+        padding: 7px 14px;
+        border-radius: var(--radius-full);
+        border: 1.5px solid var(--border-light);
+        background: var(--bg-primary);
+        font-size: var(--font-size-xs);
+        font-weight: 600;
+        font-family: var(--font-sans);
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition:
+          border-color 0.15s,
+          background 0.15s,
+          color 0.15s;
+      }
+      .role-opt.selected {
+        border-color: var(--accent);
+        background: var(--accent-light);
+        color: var(--accent);
+      }
+
+      /* Delete button */
+      .modal-delete-btn {
+        margin-top: var(--space-lg);
+        width: 100%;
+        background: var(--danger-light);
+        color: #991b1b;
+        border: 1.5px solid #fca5a5;
+        border-radius: var(--radius-md);
+        padding: 11px;
+        font-size: var(--font-size-sm);
+        font-weight: 600;
+        font-family: var(--font-sans);
+        cursor: pointer;
+      }
+
+      /* ── Recipes Tab Integration ── */
+      .recipes-panel {
+        display: none;
+        flex: 1;
+        overflow: hidden;
+        background: var(--bg-primary);
+      }
+      .recipes-panel.active {
+        display: flex;
+        flex-direction: row;
+      }
+      .recipes-panel .sidebar {
+        width: 140px; /* Slimmed slightly to fit well on mobile frames */
+        background: white;
+        border-right: 1px solid var(--border-light);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        scrollbar-width: none;
+      }
+      .recipes-panel .sidebar::-webkit-scrollbar { display: none; }
+      .recipes-panel .sidebar h2 {
+        padding: 16px 12px 8px;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--text-tertiary);
+        opacity: 0.6;
+      }
+      .recipes-panel .category-header {
+        padding: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        cursor: pointer;
+        user-select: none;
+      }
+      .recipes-panel .category-header:hover { background: #f1f5f9; }
+      .recipes-panel .sub-menu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        background: #fafafa;
+      }
+      .recipes-panel .category-item.open .sub-menu { max-height: 500px; }
+      .recipes-panel .category-item.open .bi-chevron-down { transform: rotate(180deg); }
+      .recipes-panel .sub-item {
+        padding: 10px 12px 10px 24px;
+        font-size: 0.8rem;
+        color: var(--text-tertiary);
+        position: relative;
+        width: 100%;
+        display: block;
+        cursor: pointer;
+        user-select: none;
+      }
+      .recipes-panel .sub-item:hover { background: #f1f5f9; color: var(--accent); }
+      .recipes-panel .sub-item.active-filter {
+        color: var(--accent);
+        font-weight: 800;
+        background: var(--accent-soft);
+      }
+      .recipes-panel .sub-item.active-filter::after {
+        content: "✓";
+        position: absolute;
+        right: 8px;
+      }
+      .recipes-panel .all-recipes-btn { cursor: pointer; user-select: none; }
+      .recipes-panel .all-recipes-btn.active-filter {
+        color: var(--accent);
+        background: var(--accent-soft);
+        font-weight: 800;
+      }
+      .recipes-panel .main-view {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        min-width: 0;
+      }
+      .recipes-panel .search-container { padding: 12px; }
+      .recipes-panel .search-bar { position: relative; }
+      .recipes-panel .search-bar input {
+        width: 100%;
+        padding: 10px 10px 10px 36px;
+        border-radius: 12px;
+        border: 1px solid var(--border-light);
+        outline: none;
+        font: inherit;
+        background: white;
+      }
+      .recipes-panel .search-bar i {
+        position: absolute;
+        left: 12px;
+        top: 10px;
+        color: var(--text-tertiary);
+        font-style: normal;
+      }
+      .recipes-panel .active-pills {
+        padding: 0 12px 8px;
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        min-height: 20px;
+      }
+      .recipes-panel .pill {
+        background: var(--accent);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .recipes-panel .recipe-list-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 12px 20px;
+        scrollbar-width: none;
+      }
+      .recipes-panel .recipe-list-container::-webkit-scrollbar { display: none; }
+      .recipes-panel .recipe-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 12px;
+      }
+      .recipes-panel .recipe-card {
+        background: white;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-light);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+      }
+      .recipes-panel .recipe-color { height: 70px; width: 100%; }
+      .recipes-panel .recipe-body { padding: 8px; }
+      .recipes-panel .recipe-body h3 {
+        font-size: 0.85rem;
+        color: var(--text-primary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 2px;
+      }
+      .recipes-panel .meta-time { font-size: 0.75rem; color: var(--text-tertiary); }
+      .recipes-panel .c1 { background: #e0e7ff; } .recipes-panel .c2 { background: #dcfce7; }
+      .recipes-panel .c3 { background: #fef3c7; } .recipes-panel .c4 { background: #fee2e2; }
+      .recipes-panel .c5 { background: #e0f2fe; } .recipes-panel .c6 { background: #f3e8ff; }
+      .recipes-panel .c7 { background: #ffedd5; } .recipes-panel .c8 { background: #f1f5f9; }
+    </style>
+  </head>
+  <body>
+    <div class="phone-frame">
+      <div class="screen">
+        <header class="header">
+          <div class="brand">
+            <h1>Kitchen Kompanion</h1>
+            <div class="household-badge">
+              <span>4 person household</span>
+            </div>
+          </div>
+
+          <div class="header-actions">
+            <div class="icon-btn" id="notificationBell" aria-label="Alerts">
+              <i class="bi bi-bell"></i>
+              <div class="alert-badge">3</div>
+            </div>
+
+            <div
+              class="avatar-btn"
+              id="familyAvatarBtn"
+              aria-label="Family account"
+            >
+              F
+            </div>
+          </div>
+        </header>
+
+        <main
+          class="main-content tab-panel active"
+          id="mainContent"
+          data-tab-panel="home"
+        >
+          <div class="welcome-section">
+            <h2 class="welcome-title">Good evening, family! 👋</h2>
+            <p class="welcome-subtitle">Your kitchen hub</p>
+          </div>
+
+          <section class="card home-card">
+            <div class="card-header">
+              <h2>🏠 Household</h2>
+              <span
+                id="homeMemberCount"
+                style="
+                  font-size: var(--font-size-md);
+                  color: var(--text-secondary);
+                  font-weight: 600;
+                "
+              >
+                4 members
+              </span>
+            </div>
+            <div class="household-summary">
+              <div class="member-preview" id="homeMemberPreview">
+                <div class="member-mini">
+                  <div class="member-mini-avatar">👨</div>
+                  <span class="member-mini-name">David</span>
+                </div>
+                <div class="member-mini">
+                  <div class="member-mini-avatar">👩</div>
+                  <span class="member-mini-name">Sarah</span>
+                </div>
+                <div class="member-mini">
+                  <div class="member-mini-avatar">👦</div>
+                  <span class="member-mini-name">Alex</span>
+                </div>
+                <div class="member-mini">
+                  <div class="member-mini-avatar">👧</div>
+                  <span class="member-mini-name">Emma</span>
+                </div>
+              </div>
+              <div class="dietary-row">
+                <span class="dietary-label">Dietary preferences</span>
+                <span class="dietary-value" id="homeDietarySummary">Low sodium • high protein • low fat</span>
+              </div>
+            </div>
+          </section>
+
+          <div class="alert-chip">
+            <span class="alert-dot"></span>
+            <span>⚠️ 1 item expiring soon • Bacon (3 days)</span>
+          </div>
+
+          <section class="card home-card">
+            <div class="card-header">
+              <h2>🍽️ Tonight's suggested meal</h2>
+              <span class="from-recipes-link" onclick="switchTab('recipes')" style="cursor: pointer;">from Recipes</span>
+            </div>
+
+            <div class="meal-card">
+              <div class="meal-container">
+                <div class="meal-thumbnail">
+                  <img src="steak.jpeg" alt="Steak & mashed potatoes" onerror="this.style.display='none'"/>
+                </div>
+
+                <div class="meal-details">
+                  <h3 class="meal-name">Steak & mashed potatoes</h3>
+
+                  <div class="meal-meta">
+                    <span><span class="emo-size">⏱️</span> 40 min</span>
+                    <span><span class="emo-size">👥</span> serves 4</span>
+                    <span><span class="emo-size">🔥</span> 520 kcal</span>
+                  </div>
+
+                  <div class="family-fit">
+                    <div class="fit-indicator" title="Good for David">👨</div>
+                    <div class="fit-indicator" title="Good for Sarah">👩</div>
+                    <div class="fit-indicator" title="Good for Alex">👦</div>
+                    <div class="fit-indicator warning" title="Okay for Emma">
+                      👧
+                    </div>
+                  </div>
+
+                  <button
+                    class="btn-view-recipe"
+                    id="viewInRecipesBtn"
+                    type="button"
+                  >
+                    View in Recipes →
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <section
+          class="main-content tab-panel"
+          id="inventoryPanel"
+          data-tab-panel="inventory"
+        >
+          <div class="inventory-hero">
+            <h2 class="welcome-title">Inventory</h2>
+            <p class="inventory-subtitle">
+              Quickly use or restock items without opening full edit.
+            </p>
+          </div>
+
+          <div class="inventory-metrics">
+            <div class="metric-card metric-total">
+              <span class="metric-label">Total items</span>
+              <span class="metric-value" id="metricTotalItems">0</span>
+            </div>
+            <div class="metric-card metric-low">
+              <span class="metric-label">Low stock</span>
+              <span class="metric-value" id="metricLowStock">0</span>
+            </div>
+          </div>
+
+          <section class="card">
+            <div class="inventory-form">
+              <div class="inventory-toolbar">
+                <input
+                  class="inventory-search"
+                  id="inventorySearch"
+                  type="search"
+                  placeholder="Search inventory"
+                  aria-label="Search inventory"
+                />
+                <button
+                  class="inventory-add-btn"
+                  type="button"
+                  id="inventoryQuickAddBtn"
+                >
+                  + Add
+                </button>
+              </div>
+
+              <div class="inventory-add-panel" id="inventoryAddPanel">
+                <form
+                  class="inventory-form"
+                  id="inventoryAddForm"
+                  style="padding: 0"
+                >
+                  <input
+                    class="input-control"
+                    id="inventoryAddName"
+                    type="text"
+                    placeholder="Ingredient name"
+                    required
+                  />
+
+                  <div class="inventory-inline-grid">
+                    <input
+                      class="input-control"
+                      id="inventoryAddQuantity"
+                      type="number"
+                      min="0.01"
+                      step="0.01"
+                      placeholder="Quantity"
+                      required
+                    />
+                    <input
+                      class="input-control"
+                      id="inventoryAddUnit"
+                      type="text"
+                      placeholder="Unit"
+                      required
+                    />
+                  </div>
+
+                  <div class="inventory-inline-grid">
+                    <input
+                      class="input-control"
+                      id="inventoryAddCategory"
+                      type="text"
+                      placeholder="Category"
+                    />
+                    <select
+                      class="input-control"
+                      id="inventoryAddStorage"
+                      required
+                    >
+                      <option value="room">Room temp</option>
+                      <option value="fresh">Keep fresh</option>
+                      <option value="freezer">Freezer</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  <div class="inventory-form-actions">
+                    <button class="btn-primary" type="submit">Add item</button>
+                    <button
+                      class="btn-secondary"
+                      type="button"
+                      id="inventoryAddCancelBtn"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <div class="inventory-filters" id="inventoryFilters">
+                <button
+                  class="filter-chip active"
+                  type="button"
+                  data-filter="all"
+                >
+                  All
+                </button>
+                <button class="filter-chip" type="button" data-filter="room">
+                  Room temp
+                </button>
+                <button class="filter-chip" type="button" data-filter="fresh">
+                  Keep fresh
+                </button>
+                <button class="filter-chip" type="button" data-filter="freezer">
+                  Freezer
+                </button>
+                <button class="filter-chip" type="button" data-filter="other">
+                  Other
+                </button>
+              </div>
+
+              <div class="inventory-groups">
+                <div class="inventory-item-list" id="inventoryGroups"></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-header shopping-pickups-header">
+              <h2>🛒 Shopping pickups</h2>
+            </div>
+            <div class="shopping-list">
+              <button
+                class="shopping-add-toggle"
+                type="button"
+                id="shoppingAddToggleBtn"
+              >
+                + Add pickup item
+              </button>
+
+              <div class="shopping-add-panel" id="shoppingAddPanel">
+                <form
+                  class="inventory-form"
+                  id="shoppingAddForm"
+                  style="padding: 0"
+                >
+                  <input
+                    class="input-control"
+                    id="shoppingAddName"
+                    type="text"
+                    placeholder="Item name"
+                    required
+                  />
+
+                  <div class="inventory-inline-grid">
+                    <input
+                      class="input-control"
+                      id="shoppingAddQuantity"
+                      type="number"
+                      min="1"
+                      step="1"
+                      placeholder="Quantity"
+                      required
+                    />
+                    <input
+                      class="input-control"
+                      id="shoppingAddUnit"
+                      type="text"
+                      placeholder="Unit"
+                      required
+                    />
+                  </div>
+
+                  <div class="inventory-inline-grid">
+                    <input
+                      class="input-control"
+                      id="shoppingAddCategory"
+                      type="text"
+                      placeholder="Category"
+                    />
+                    <select
+                      class="input-control"
+                      id="shoppingAddStorage"
+                      required
+                    >
+                      <option value="room">Room temp</option>
+                      <option value="fresh">Keep fresh</option>
+                      <option value="freezer">Freezer</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  <div class="inventory-form-actions">
+                    <button class="btn-primary" type="submit">
+                      Add pickup
+                    </button>
+                    <button
+                      class="btn-secondary"
+                      type="button"
+                      id="shoppingAddCancelBtn"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <div id="shoppingListContainer"></div>
+              <button
+                class="btn-primary"
+                type="button"
+                id="shoppingToInventoryBtn"
+              >
+                Add checked to inventory
+              </button>
+            </div>
+          </section>
+
+          <div
+            class="status-banner"
+            id="inventoryStatus"
+            role="status"
+            aria-live="polite"
+          ></div>
+        </section>
+        
+        <section class="tab-panel recipes-panel" id="recipesPanel" data-tab-panel="recipes">
+          <aside class="sidebar">
+            <h2>Filters</h2>
+            <div class="all-recipes-btn active-filter" id="allRecipesBtn" onclick="clearAllFilters()">
+              <div class="category-header"><span>🏠 All Recipes</span></div>
+            </div>
+            
+            <div class="category-item">
+              <div class="category-header" onclick="toggleSidebar(this)"><span>🥩 Proteins</span> <i class="bi bi-chevron-down"></i></div>
+              <div class="sub-menu" data-cat="protein">
+                <div class="sub-item" onclick="toggleFilter('protein', 'chicken', this)">Chicken</div>
+                <div class="sub-item" onclick="toggleFilter('protein', 'beef', this)">Beef</div>
+                <div class="sub-item" onclick="toggleFilter('protein', 'seafood', this)">Seafood</div>
+              </div>
+            </div>
+
+            <div class="category-item">
+              <div class="category-header" onclick="toggleSidebar(this)"><span>🍳 Meals</span> <i class="bi bi-chevron-down"></i></div>
+              <div class="sub-menu" data-cat="meal">
+                <div class="sub-item" onclick="toggleFilter('meal', 'breakfast', this)">Breakfast</div>
+                <div class="sub-item" onclick="toggleFilter('meal', 'lunch', this)">Lunch</div>
+                <div class="sub-item" onclick="toggleFilter('meal', 'dinner', this)">Dinner</div>
+              </div>
+            </div>
+
+            <div class="category-item">
+              <div class="category-header" onclick="toggleSidebar(this)"><span>🌍 Cuisines</span> <i class="bi bi-chevron-down"></i></div>
+              <div class="sub-menu" data-cat="cuisine">
+                <div class="sub-item" onclick="toggleFilter('cuisine', 'italian', this)">Italian</div>
+                <div class="sub-item" onclick="toggleFilter('cuisine', 'mexican', this)">Mexican</div>
+                <div class="sub-item" onclick="toggleFilter('cuisine', 'asian', this)">Asian</div>
+              </div>
+            </div>
+
+            <div class="category-item">
+              <div class="category-header" onclick="toggleSidebar(this)"><span>⏱️ Time</span> <i class="bi bi-chevron-down"></i></div>
+              <div class="sub-menu" data-cat="time">
+                <div class="sub-item" onclick="toggleFilter('time', '15min', this)">Under 15 Min</div>
+                <div class="sub-item" onclick="toggleFilter('time', '30min', this)">Under 30 Min</div>
+                <div class="sub-item" onclick="toggleFilter('time', 'slow-cooker', this)">Slow Cooker</div>
+              </div>
+            </div>
+          </aside>
+
+          <div class="main-view">
+            <div class="search-container">
+              <div class="search-bar"><i class="bi bi-search"></i><input type="text" id="recipeSearchInput" onkeyup="applyFilters()" placeholder="Search recipes..."></div>
+              <button class="btn-primary" type="button" onclick="openPantryChef()" style="margin-top: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;">
+                <i class="bi bi-magic"></i> Find recipe from inventory
+              </button>
+            </div>
+
+            <div class="active-pills" id="activePills"></div>
+
+            <div class="recipe-list-container">
+              <div class="recipe-grid" id="recipeGrid">
+                <div class="recipe-card" data-tags="seafood italian dinner 30min" onclick="openCookingScreen()">
+                  <div class="recipe-color c1"></div><div class="recipe-body"><h3>Shrimp Scampi</h3><span class="meta-time">⏱️ 20m</span></div>
+                </div>
+                <div class="recipe-card" data-tags="chicken mexican lunch 15min" onclick="openCookingScreen()">
+                  <div class="recipe-color c2"></div><div class="recipe-body"><h3>Chicken Tacos</h3><span class="meta-time">⏱️ 15m</span></div>
+                </div>
+                <div class="recipe-card" data-tags="chicken asian dinner 15min" onclick="openCookingScreen()">
+                  <div class="recipe-color c3"></div><div class="recipe-body"><h3>Sesame Chicken</h3><span class="meta-time">⏱️ 12m</span></div>
+                </div>
+                <div class="recipe-card" data-tags="beef italian dinner slow-cooker" onclick="openCookingScreen()">
+                  <div class="recipe-color c4"></div><div class="recipe-body"><h3>Beef Ragu</h3><span class="meta-time">⏱️ 6h</span></div>
+                </div>
+                <div class="recipe-card" data-tags="seafood italian lunch 30min" onclick="openCookingScreen()">
+                  <div class="recipe-color c5"></div><div class="recipe-body"><h3>Lemon Cod</h3><span class="meta-time">⏱️ 25m</span></div>
+                </div>
+                <div class="recipe-card" data-tags="beef mexican dinner 30min" onclick="openCookingScreen()">
+                  <div class="recipe-color c6"></div><div class="recipe-body"><h3>Beef Enchiladas</h3><span class="meta-time">⏱️ 30m</span></div>
+                </div>
+                <div class="recipe-card" data-tags="chicken breakfast 15min" onclick="openCookingScreen()">
+                  <div class="recipe-color c7"></div><div class="recipe-body"><h3>Breakfast Burrito</h3><span class="meta-time">⏱️ 10m</span></div>
+                </div>
+                <div class="recipe-card" data-tags="seafood asian dinner 15min" onclick="openCookingScreen()">
+                  <div class="recipe-color c8"></div><div class="recipe-body"><h3>Miso Salmon</h3><span class="meta-time">⏱️ 15m</span></div>
+                </div>
+                <div class="recipe-card" data-tags="beef lunch 15min" onclick="openCookingScreen()">
+                  <div class="recipe-color c1"></div><div class="recipe-body"><h3>Steak Salad</h3><span class="meta-time">⏱️ 15m</span></div>
+                </div>
+                <div class="recipe-card" data-tags="asian breakfast 15min" onclick="openCookingScreen()">
+                  <div class="recipe-color c2"></div><div class="recipe-body"><h3>Congee Bowl</h3><span class="meta-time">⏱️ 15m</span></div>
+                </div>
+                <div class="recipe-card" data-tags="mexican breakfast 15min" onclick="openCookingScreen()">
+                  <div class="recipe-color c3"></div><div class="recipe-body"><h3>Huevos Rancheros</h3><span class="meta-time">⏱️ 15m</span></div>
+                </div>
+                <div class="recipe-card" data-tags="beef italian dinner slow-cooker" onclick="openCookingScreen()">
+                  <div class="recipe-color c1"></div><div class="recipe-body"><h3>Steak & mashed potatoes</h3><span class="meta-time">⏱️ 60m</span></div>
+                </div>
+                <div class="recipe-card" data-tags="beef slow-cooker dinner" onclick="openCookingScreen()">
+                  <div class="recipe-color c4"></div><div class="recipe-body"><h3>Pot Roast</h3><span class="meta-time">⏱️ 8h</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section
+          class="cooking-screen"
+          id="cookingScreen"
+          aria-labelledby="cooking-heading"
+        >
+          <div class="cooking-header">
+            <button
+              class="back-btn"
+              type="button"
+              onclick="closeCookingScreen()"
+            >
+              ← Back
+            </button>
+            <span class="cooking-badge">Cooking flow</span>
+          </div>
+
+          <div class="cooking-hero">
+            <div class="cooking-image-holder" style="padding: 0; border: none; overflow: hidden;">
+              <img src="steak.jpeg" alt="Steak & mashed potatoes" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'"/>
+            </div>
+
+            <div class="cooking-hero-text">
+              <h2 id="cooking-heading">Steak & mashed potatoes</h2>
+              <p>Tonight's guided cooking flow for your household meal.</p>
+
+              <div class="cooking-meta">
+                <span>⏱️ 40 min</span>
+                <span>👥 serves 4</span>
+                <span>🔥 520 kcal/serving</span>
+              </div>
+            </div>
+          </div>
+
+          <section class="cooking-card">
+            <h3>Ingredients needed</h3>
+            <div class="ingredient-list">
+              <div class="ingredient-item">
+                <span class="ingredient-name">Steak</span>
+                <span class="ingredient-amount">4 cuts</span>
+              </div>
+              <div class="ingredient-item">
+                <span class="ingredient-name">Potatoes</span>
+                <span class="ingredient-amount">6 medium</span>
+              </div>
+              <div class="ingredient-item">
+                <span class="ingredient-name">Butter</span>
+                <span class="ingredient-amount">4 tbsp</span>
+              </div>
+              <div class="ingredient-item">
+                <span class="ingredient-name">Milk</span>
+                <span class="ingredient-amount">1/2 cup</span>
+              </div>
+              <div class="ingredient-item">
+                <span class="ingredient-name">Salt & pepper</span>
+                <span class="ingredient-amount">to taste</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="cooking-card">
+            <h3>Steps</h3>
+            <div class="step-list">
+              <div class="step-item">
+                <div class="step-number">1</div>
+                <div class="step-text">
+                  <strong>Prep the ingredients</strong>
+                  <p>
+                    Wash and peel the potatoes, season the steaks, and set out
+                    the butter and milk.
+                  </p>
+                </div>
+              </div>
+
+              <div class="step-item">
+                <div class="step-number">2</div>
+                <div class="step-text">
+                  <strong>Cook the potatoes</strong>
+                  <p>
+                    Boil the potatoes until soft, then drain and mash with
+                    butter, milk, salt, and pepper.
+                  </p>
+                </div>
+              </div>
+
+              <div class="step-item">
+                <div class="step-number">3</div>
+                <div class="step-text">
+                  <strong>Cook the steak</strong>
+                  <p>
+                    Sear the steaks in a hot pan until they reach the preferred
+                    doneness for the household.
+                  </p>
+                </div>
+              </div>
+
+              <div class="step-item">
+                <div class="step-number">4</div>
+                <div class="step-text">
+                  <strong>Plate and serve</strong>
+                  <p>
+                    Plate the steak with mashed potatoes and serve the meal for
+                    the family.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <button
+              class="btn-primary"
+              type="button"
+              onclick="completeSuggestedRecipe()"
+            >
+              Complete recipe and deduct inventory
+            </button>
+          </section>
+        </section>
+
+        <section class="cooking-screen" id="pantryChefScreen" aria-labelledby="pantry-heading">
+          <div class="cooking-header">
+            <button class="back-btn" type="button" onclick="closePantryChef()">← Back</button>
+            <span class="cooking-badge">Pantry Chef</span>
+          </div>
+
+          <div class="cooking-hero" style="flex-direction: column; gap: 8px; padding: 16px;">
+            <h2 id="pantry-heading">What do you want to use?</h2>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Select ingredients from your inventory to find matching recipes.</p>
+          </div>
+
+          <section class="cooking-card" style="flex: 1; display: flex; flex-direction: column;">
+            <div style="margin-bottom: var(--space-lg);">
+              <label style="font-weight: 600; font-size: 0.9rem; display: block; margin-bottom: 6px; color: var(--text-secondary);">Time available</label>
+              <select id="pantryTimeLimit" class="input-control">
+                <option value="any">Any amount of time</option>
+                <option value="15min">Under 15 minutes</option>
+                <option value="30min">Under 30 minutes</option>
+                <option value="60min">Under 1 hour</option>
+              </select>
+            </div>
+
+            <h3 style="margin-bottom: 12px;">Your Inventory</h3>
+            <div class="shopping-list" id="pantrySelectionList" style="padding: 0; flex: 1; overflow-y: auto;">
+              </div>
+            
+            <button class="btn-primary" type="button" onclick="findRecipeFromSelection()" style="margin-top: auto;">
+              Find matching recipe
+            </button>
+          </section>
+        </section>
+        
+        <section
+          class="family-screen"
+          id="familyScreen"
+          aria-label="Family members"
+        >
+          <div class="family-screen-back-bar">
+            <button
+              class="back-btn"
+              type="button"
+              onclick="switchTab('home')"
+              aria-label="Go back to home"
+            >
+              ← Back
+            </button>
+            <h2 class="family-screen-title">
+              &#x1F468;&#x200D;&#x1F469;&#x200D;&#x1F467;&#x200D;&#x1F466; Your
+              family
+            </h2>
+            <button
+              class="add-member-btn"
+              type="button"
+              aria-label="Add family member"
+              onclick="openMemberModal(null)"
+            >
+              <span>&#xFF0B;</span> Add
+            </button>
+          </div>
+          <div class="family-screen-list" id="familyScreenList"></div>
+        </section>
+        <div
+          class="modal-overlay"
+          id="memberModal"
+          aria-modal="true"
+          role="dialog"
+          aria-label="Edit family member"
+        >
+          <div class="modal-sheet">
+            <div class="modal-header">
+              <button
+                class="modal-cancel-btn"
+                type="button"
+                onclick="closeMemberModal()"
+              >
+                Cancel
+              </button>
+              <h3 class="modal-title" id="modalTitle">Add member</h3>
+              <button
+                class="modal-save-btn"
+                type="button"
+                onclick="saveMember()"
+              >
+                Save
+              </button>
+            </div>
+
+            <div class="modal-body">
+              <div class="modal-section-label">Avatar</div>
+              <div class="avatar-picker" id="avatarPicker">
+                <button
+                  type="button"
+                  class="avatar-opt"
+                  data-emoji="&#x1F468;"
+                  onclick="selectAvatar(this)"
+                >
+                  &#x1F468;
+                </button>
+                <button
+                  type="button"
+                  class="avatar-opt"
+                  data-emoji="&#x1F469;"
+                  onclick="selectAvatar(this)"
+                >
+                  &#x1F469;
+                </button>
+                <button
+                  type="button"
+                  class="avatar-opt"
+                  data-emoji="&#x1F466;"
+                  onclick="selectAvatar(this)"
+                >
+                  &#x1F466;
+                </button>
+                <button
+                  type="button"
+                  class="avatar-opt"
+                  data-emoji="&#x1F467;"
+                  onclick="selectAvatar(this)"
+                >
+                  &#x1F467;
+                </button>
+                <button
+                  type="button"
+                  class="avatar-opt"
+                  data-emoji="&#x1F474;"
+                  onclick="selectAvatar(this)"
+                >
+                  &#x1F474;
+                </button>
+                <button
+                  type="button"
+                  class="avatar-opt"
+                  data-emoji="&#x1F475;"
+                  onclick="selectAvatar(this)"
+                >
+                  &#x1F475;
+                </button>
+                <button
+                  type="button"
+                  class="avatar-opt"
+                  data-emoji="&#x1F9D1;"
+                  onclick="selectAvatar(this)"
+                >
+                  &#x1F9D1;
+                </button>
+                <button
+                  type="button"
+                  class="avatar-opt"
+                  data-emoji="&#x1F476;"
+                  onclick="selectAvatar(this)"
+                >
+                  &#x1F476;
+                </button>
+              </div>
+              <div class="modal-section-label">Name</div>
+              <input
+                class="modal-input"
+                type="text"
+                id="inputName"
+                placeholder="e.g. Sarah"
+                maxlength="30"
+              />
+              <div class="modal-section-label">Age</div>
+              <input
+                class="modal-input"
+                type="number"
+                id="inputAge"
+                placeholder="e.g. 42"
+                min="0"
+                max="120"
+              />
+              <div class="modal-section-label">Role</div>
+              <div class="role-picker" id="rolePicker">
+                <button
+                  type="button"
+                  class="role-opt"
+                  data-role="Parent"
+                  onclick="selectRole(this)"
+                >
+                  Parent
+                </button>
+                <button
+                  type="button"
+                  class="role-opt"
+                  data-role="Teen"
+                  onclick="selectRole(this)"
+                >
+                  Teen
+                </button>
+                <button
+                  type="button"
+                  class="role-opt"
+                  data-role="Child"
+                  onclick="selectRole(this)"
+                >
+                  Child
+                </button>
+                <button
+                  type="button"
+                  class="role-opt"
+                  data-role="Senior"
+                  onclick="selectRole(this)"
+                >
+                  Senior
+                </button>
+              </div>
+              <div class="modal-section-label">Daily calorie target (kcal)</div>
+              <input
+                class="modal-input"
+                type="number"
+                id="inputCalories"
+                placeholder="e.g. 2000"
+                min="500"
+                max="5000"
+                step="50"
+              />
+              <div class="modal-section-label">
+                Health conditions
+                <span class="modal-hint">(comma-separated)</span>
+              </div>
+              <input
+                class="modal-input"
+                type="text"
+                id="inputHealth"
+                placeholder="e.g. High blood pressure, Diabetes"
+              />
+              <div class="modal-section-label">
+                Allergies <span class="modal-hint">(comma-separated)</span>
+              </div>
+              <input
+                class="modal-input"
+                type="text"
+                id="inputAllergies"
+                placeholder="e.g. Peanuts, Shellfish"
+              />
+              <div class="modal-section-label">
+                Dietary preferences
+                <span class="modal-hint">(comma-separated)</span>
+              </div>
+              <input
+                class="modal-input"
+                type="text"
+                id="inputDiet"
+                placeholder="e.g. Low sodium, High protein"
+              />
+              <button
+                class="modal-delete-btn"
+                type="button"
+                id="modalDeleteBtn"
+                onclick="deleteMember()"
+              >
+                &#x1F5D1;&#xFE0F; Remove member
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="notificationModal"
+          class="notification-modal"
+          aria-modal="true"
+          role="dialog"
+          aria-label="Notifications"
+        >
+          <div class="notification-container">
+            <div class="notification-header">
+              <h3>🔔 Notifications</h3>
+              <button
+                class="notification-close"
+                id="closeModalBtn"
+                type="button"
+              >
+                ✕
+              </button>
+            </div>
+            <div class="notification-content">
+              <div class="notification-item">
+                <div class="notification-icon danger">⚠️</div>
+                <div class="notification-text">
+                  <div class="notification-title">Food expiring soon</div>
+                  <div class="notification-desc">
+                    Bacon expires in 3 days. Add to shopping list?
+                  </div>
+                  <div class="notification-time">2 hours ago</div>
+                </div>
+              </div>
+              <div class="notification-item">
+                <div class="notification-icon">👤</div>
+                <div class="notification-text">
+                  <div class="notification-title">New family member joined</div>
+                  <div class="notification-desc">
+                    Emma has been added to your household.
+                  </div>
+                  <div class="notification-time">Yesterday</div>
+                </div>
+              </div>
+              <div class="notification-item">
+                <div class="notification-icon warning">🛒</div>
+                <div class="notification-text">
+                  <div class="notification-title">Shopping list reminder</div>
+                  <div class="notification-desc">
+                    You're almost out of milk and eggs.
+                  </div>
+                  <div class="notification-time">2 days ago</div>
+                </div>
+              </div>
+            </div>
+            <div class="notification-footer">
+              <button class="mark-read-btn" id="markReadBtn" type="button">
+                Mark all as read
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <nav class="bottom-nav">
+          <div
+            class="icon-rav nav-tab active-tab"
+            id="tab-home"
+            onclick="switchTab('home')"
+          >
+            <i class="icon-nav home">&#x1F3E0;</i>
+            <span>Home</span>
+          </div>
+          <div
+            class="icon-rav nav-tab"
+            id="tab-recipes"
+            onclick="switchTab('recipes')"
+          >
+            <i class="icon-nav recipes">&#x1F4D6;</i>
+            <span>Recipes</span>
+          </div>
+          <div
+            class="icon-rav nav-tab"
+            id="tab-inventory"
+            onclick="switchTab('inventory')"
+          >
+            <i class="icon-nav inventory">&#x1F4E6;</i>
+            <span>Inventory</span>
+          </div>
+          <div
+            class="icon-rav nav-tab"
+            id="tab-family"
+            onclick="switchTab('family')"
+          >
+            <i class="icon-nav account">&#x1F465;</i>
+            <span>Family</span>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <script>
+      const INVENTORY_STORAGE_KEY = "kk-inventory-state";
+      const STORAGE_LABELS = {
+        room: "Room temp",
+        fresh: "Keep fresh",
+        freezer: "Freezer",
+        other: "Other",
+      };
+
+      let appState = loadInventoryState();
+      let activeInventoryFilter = "all";
+      let activeTab = "home";
+      let expandedItemId = null;
+
+      let familyMembers = [
+        {
+          id: 1,
+          emoji: "👨",
+          name: "David",
+          age: 45,
+          role: "Parent",
+          calories: 2000,
+          health: ["High blood pressure", "High cholesterol"],
+          allergies: [],
+          diet: ["Low sodium", "Low fat"],
+        },
+        {
+          id: 2,
+          emoji: "👩",
+          name: "Sarah",
+          age: 42,
+          role: "Parent",
+          calories: 1800,
+          health: [],
+          allergies: ["Shellfish", "Tree nuts"],
+          diet: [],
+        },
+        {
+          id: 3,
+          emoji: "👦",
+          name: "Alex",
+          age: 16,
+          role: "Teen",
+          calories: 2400,
+          health: [],
+          allergies: ["Peanuts"],
+          diet: ["High protein", "More vegetables"],
+        },
+        {
+          id: 4,
+          emoji: "👧",
+          name: "Emma",
+          age: 9,
+          role: "Child",
+          calories: 1600,
+          health: ["Lactose intolerant"],
+          allergies: ["Dairy", "Eggs"],
+          diet: ["Prefers sweet foods"],
+        },
+      ];
+
+      let nextId = 5;
+      let editingId = null;
+      const roleColors = {
+        Parent: { bg: "var(--member-blue-bg)", color: "var(--member-blue)" },
+        Teen: { bg: "var(--member-purple-bg)", color: "var(--member-purple)" },
+        Child: { bg: "var(--member-green-bg)", color: "var(--member-green)" },
+        Senior: {
+          bg: "var(--member-orange-bg)",
+          color: "var(--member-orange)",
+        },
+      };
+      function renderHome() {
+        const countEl = document.getElementById("homeMemberCount");
+        const previewEl = document.getElementById("homeMemberPreview");
+        const dietaryEl = document.getElementById("homeDietarySummary");
+
+        if (countEl) {
+          const n = familyMembers.length;
+          countEl.textContent = n + " member" + (n !== 1 ? "s" : "");
+        }
+
+        if (previewEl) {
+          previewEl.innerHTML = familyMembers.map((m) => `
+            <div class="member-mini">
+              <div class="member-mini-avatar">${m.emoji}</div>
+              <span class="member-mini-name">${m.name}</span>
+            </div>
+          `).join("");
+        }
+
+        if (dietaryEl) {
+          const allRestrictions = familyMembers.flatMap((m) => [
+            ...m.allergies,
+            ...m.health,
+            ...m.diet,
+          ]);
+          const unique = [...new Set(allRestrictions)];
+          dietaryEl.textContent = unique.length > 0
+            ? unique.slice(0, 3).join(" • ") + (unique.length > 3 ? " +" + (unique.length - 3) + " more" : "")
+            : "None • balanced meals";
+        }
+      }
+
+      function renderFamily() {
+        const list = document.getElementById("familyScreenList");
+        list.innerHTML = "";
+
+        familyMembers.forEach((m) => {
+          const colors = roleColors[m.role] || roleColors.Parent;
+          const card = document.createElement("div");
+          card.className = "fcard";
+          card.innerHTML = `
+            <div class="fcard-top">
+              <div class="fcard-avatar-box" style="background:${colors.bg};color:${colors.color};">${m.emoji}</div>
+              <div class="fcard-identity">
+                <div class="fcard-name-row">
+                  <span class="fcard-name">${m.name}</span>
+                  <span class="fcard-role-badge" style="background:${colors.bg};color:${colors.color};">${m.role}</span>
+                </div>
+                <span class="fcard-age">Age ${m.age}</span>
+              </div>
+              <button class="fcard-edit-btn" type="button" aria-label="Edit ${m.name}" onclick="openMemberModal(${m.id})">✏️</button>
+            </div>
+
+            <div class="fcard-divider"></div>
+
+            ${renderTagSection("Health conditions", m.health, "ftag-warning", "⚠️")}
+            ${renderTagSection("Allergies", m.allergies, "ftag-danger", "🚫")}
+            ${renderTagSection("Dietary preferences", m.diet, "ftag-info", "✅")}
+
+            <div class="fcard-nutrition-row">
+              <span class="fcard-nutr-label">Daily calorie target</span>
+              <span class="fcard-nutr-value">${m.calories.toLocaleString()} kcal</span>
+            </div>
+          `;
+          list.appendChild(card);
+        });
+      }
+
+      function renderTagSection(label, items, tagClass, icon) {
+        if (!items || items.length === 0) {
+          return `
+            <div class="fcard-section-label">${label}</div>
+            <div class="fcard-tags"><span class="ftag ftag-neutral">✅ None</span></div>
+          `;
+        }
+        const tags = items
+          .map((i) => `<span class="ftag ${tagClass}">${icon} ${i}</span>`)
+          .join("");
+        return `
+          <div class="fcard-section-label">${label}</div>
+          <div class="fcard-tags">${tags}</div>
+        `;
+      }
+      function openMemberModal(id) {
+        editingId = id;
+        const modal = document.getElementById("memberModal");
+        const deleteBtn = document.getElementById("modalDeleteBtn");
+        const title = document.getElementById("modalTitle");
+        document.getElementById("inputName").value = "";
+        document.getElementById("inputAge").value = "";
+        document.getElementById("inputCalories").value = "";
+        document.getElementById("inputHealth").value = "";
+        document.getElementById("inputAllergies").value = "";
+        document.getElementById("inputDiet").value = "";
+        document
+          .querySelectorAll(".avatar-opt")
+          .forEach((b) => b.classList.remove("selected"));
+        document
+          .querySelectorAll(".role-opt")
+          .forEach((b) => b.classList.remove("selected"));
+
+        if (id !== null) {
+          const m = familyMembers.find((x) => x.id === id);
+          title.textContent = "Edit member";
+          deleteBtn.style.display = "block";
+          document.getElementById("inputName").value = m.name;
+          document.getElementById("inputAge").value = m.age;
+          document.getElementById("inputCalories").value = m.calories;
+          document.getElementById("inputHealth").value = m.health.join(", ");
+          document.getElementById("inputAllergies").value =
+            m.allergies.join(", ");
+          document.getElementById("inputDiet").value = m.diet.join(", ");
+          const avatarBtn = document.querySelector(
+            `.avatar-opt[data-emoji="${m.emoji}"]`,
+          );
+          if (avatarBtn) avatarBtn.classList.add("selected");
+          const roleBtn = document.querySelector(
+            `.role-opt[data-role="${m.role}"]`,
+          );
+          if (roleBtn) roleBtn.classList.add("selected");
+        } else {
+          title.textContent = "Add member";
+          deleteBtn.style.display = "none";
+          document.querySelector(".avatar-opt").classList.add("selected");
+          document.querySelector(".role-opt").classList.add("selected");
+        }
+
+        modal.classList.add("modal-open");
+      }
+
+      function closeMemberModal() {
+        document.getElementById("memberModal").classList.remove("modal-open");
+        editingId = null;
+      }
+
+      function selectAvatar(btn) {
+        document
+          .querySelectorAll(".avatar-opt")
+          .forEach((b) => b.classList.remove("selected"));
+        btn.classList.add("selected");
+      }
+
+      function selectRole(btn) {
+        document
+          .querySelectorAll(".role-opt")
+          .forEach((b) => b.classList.remove("selected"));
+        btn.classList.add("selected");
+      }
+
+      function parseTags(str) {
+        return str
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
+      }
+
+      function saveMember() {
+        const name = document.getElementById("inputName").value.trim();
+        const age = parseInt(document.getElementById("inputAge").value) || 0;
+        const calories =
+          parseInt(document.getElementById("inputCalories").value) || 2000;
+        const health = parseTags(document.getElementById("inputHealth").value);
+        const allergies = parseTags(
+          document.getElementById("inputAllergies").value,
+        );
+        const diet = parseTags(document.getElementById("inputDiet").value);
+
+        const selectedAvatar = document.querySelector(".avatar-opt.selected");
+        const emoji = selectedAvatar ? selectedAvatar.dataset.emoji : "🧑";
+
+        const selectedRole = document.querySelector(".role-opt.selected");
+        const role = selectedRole ? selectedRole.dataset.role : "Parent";
+
+        if (!name) {
+          document.getElementById("inputName").focus();
+          document.getElementById("inputName").style.borderColor =
+            "var(--danger)";
+          return;
+        }
+        document.getElementById("inputName").style.borderColor = "";
+
+        if (editingId !== null) {
+          const idx = familyMembers.findIndex((x) => x.id === editingId);
+          familyMembers[idx] = {
+            id: editingId,
+            emoji,
+            name,
+            age,
+            role,
+            calories,
+            health,
+            allergies,
+            diet,
+          };
+        } else {
+          familyMembers.push({
+            id: nextId++,
+            emoji,
+            name,
+            age,
+            role,
+            calories,
+            health,
+            allergies,
+            diet,
+          });
+        }
+
+        renderFamily();
+        renderHome();
+        closeMemberModal();
+      }
+
+      function deleteMember() {
+        if (editingId === null) return;
+        familyMembers = familyMembers.filter((x) => x.id !== editingId);
+        renderFamily();
+        renderHome();
+        closeMemberModal();
+      }
+
+      function loadInventoryState() {
+        const fallback = {
+          recipeInProgress: false,
+          inventory: [
+            {
+              id: createId(),
+              name: "Potatoes",
+              quantity: 4,
+              unit: "left",
+              category: "Vegetable",
+              storage: "room",
+              lowStockAt: 2,
+            },
+            {
+              id: createId(),
+              name: "Steak",
+              quantity: 6,
+              unit: "cuts",
+              category: "Meat",
+              storage: "fresh",
+              lowStockAt: 2,
+            },
+            {
+              id: createId(),
+              name: "Milk",
+              quantity: 2,
+              unit: "cups",
+              category: "Dairy",
+              storage: "fresh",
+              lowStockAt: 1,
+            },
+            {
+              id: createId(),
+              name: "Frozen peas",
+              quantity: 1,
+              unit: "bag",
+              category: "Vegetable",
+              storage: "freezer",
+              lowStockAt: 1,
+            },
+          ],
+          shoppingList: [
+            {
+              id: createId(),
+              name: "Eggs",
+              quantity: 12,
+              unit: "count",
+              category: "Dairy",
+              storage: "fresh",
+              checked: false,
+            },
+            {
+              id: createId(),
+              name: "Olive oil",
+              quantity: 1,
+              unit: "bottle",
+              category: "Oil",
+              storage: "room",
+              checked: false,
+            },
+          ],
+        };
+
+        try {
+          const raw = localStorage.getItem(INVENTORY_STORAGE_KEY);
+          if (!raw) return fallback;
+          const parsed = JSON.parse(raw);
+          return {
+            recipeInProgress: Boolean(parsed.recipeInProgress),
+            inventory: Array.isArray(parsed.inventory)
+              ? parsed.inventory
+              : fallback.inventory,
+            shoppingList: Array.isArray(parsed.shoppingList)
+              ? parsed.shoppingList
+              : fallback.shoppingList,
+          };
+        } catch (error) {
+          return fallback;
+        }
+      }
+
+      function saveInventoryState() {
+        localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(appState));
+      }
+
+      function createId() {
+        return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+      }
+
+      function normalizeText(value) {
+        return String(value || "")
+          .trim()
+          .toLowerCase();
+      }
+
+      function formatQty(value) {
+        const num = Number(value);
+        if (!Number.isFinite(num)) return "0";
+        if (Number.isInteger(num)) return String(num);
+        return num
+          .toFixed(2)
+          .replace(/\.00$/, "")
+          .replace(/(\.[1-9])0$/, "$1");
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/\"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function isLowStock(item) {
+        const threshold = Number(item.lowStockAt || 1);
+        return Number(item.quantity) <= threshold;
+      }
+
+      function showStatus(message, tone) {
+        const banner = document.getElementById("inventoryStatus");
+        if (!banner) return;
+        banner.textContent = message;
+        banner.className = `status-banner show ${tone}`;
+      }
+
+      function toggleAddPanel(open) {
+        const panel = document.getElementById("inventoryAddPanel");
+        panel.classList.toggle("show", open);
+      }
+
+      function clearAddForm() {
+        const form = document.getElementById("inventoryAddForm");
+        if (!form) return;
+        form.reset();
+        document.getElementById("inventoryAddStorage").value = "room";
+      }
+
+      function adjustQuantity(id, delta) {
+        const item = appState.inventory.find((entry) => entry.id === id);
+        if (!item) return;
+        item.quantity = Number(item.quantity) + Number(delta);
+        if (item.quantity <= 0) {
+          addToShoppingPickups(item, 1);
+          appState.inventory = appState.inventory.filter(
+            (entry) => entry.id !== id,
+          );
+          showStatus(
+            `${item.name} reached zero and was added to shopping pickups.`,
+            "warning",
+          );
+          if (expandedItemId === id) {
+            expandedItemId = null;
+          }
+        }
+        saveInventoryState();
+        renderInventory();
+        renderShoppingList();
+      }
+
+      function addToShoppingPickups(item, quantity = 1) {
+        const qtyToAdd = Math.max(1, Number(quantity) || 1);
+        const existing = appState.shoppingList.find(
+          (entry) =>
+            normalizeText(entry.name) === normalizeText(item.name) &&
+            normalizeText(entry.unit) === normalizeText(item.unit) &&
+            entry.storage === item.storage,
+        );
+
+        if (existing) {
+          existing.quantity = Number(existing.quantity) + qtyToAdd;
+          return;
+        }
+
+        appState.shoppingList.push({
+          id: createId(),
+          name: item.name,
+          quantity: qtyToAdd,
+          unit: item.unit,
+          category: item.category || "General",
+          storage: item.storage,
+          checked: false,
+        });
+      }
+
+      function renderInventory() {
+        const list = document.getElementById("inventoryGroups");
+        const searchTerm = normalizeText(
+          document.getElementById("inventorySearch")?.value || "",
+        );
+        const filtered = appState.inventory
+          .filter(
+            (item) =>
+              activeInventoryFilter === "all" ||
+              item.storage === activeInventoryFilter,
+          )
+          .filter((item) => {
+            if (!searchTerm) return true;
+            return [item.name, item.category, item.storage, item.unit].some(
+              (value) => normalizeText(value).includes(searchTerm),
+            );
+          })
+          .sort((a, b) => a.name.localeCompare(b.name));
+
+        const lowStockCount = appState.inventory.filter(isLowStock).length;
+        document.getElementById("metricTotalItems").textContent = String(
+          appState.inventory.length,
+        );
+        document.getElementById("metricLowStock").textContent =
+          String(lowStockCount);
+
+        if (!filtered.length) {
+          list.innerHTML =
+            '<p class="empty-state">No matching items. Try a different filter or add a new ingredient.</p>';
+          return;
+        }
+
+        list.innerHTML = filtered
+          .map((item) => {
+            const low = isLowStock(item);
+            return `
+            <article class="inventory-item">
+              <div class="inventory-item-main">
+                <div class="inventory-item-name">${escapeHtml(item.name)}</div>
+                <div class="inventory-item-meta">${escapeHtml(item.category || "General")} · ${escapeHtml(STORAGE_LABELS[item.storage] || "Other")} · ${formatQty(item.quantity)} ${escapeHtml(item.unit)}</div>
+                <div class="inventory-status-row">
+                  ${low ? '<span class="mini-badge low">Low stock</span>' : ""}
+                </div>
+              </div>
+
+              <div class="inventory-item-actions">
+                <div class="qty-stepper" aria-label="Quick quantity controls for ${escapeHtml(item.name)}">
+                  <button class="stepper-btn" type="button" data-action="dec" data-id="${item.id}">−</button>
+                  <span class="stepper-value">${formatQty(item.quantity)}</span>
+                  <button class="stepper-btn" type="button" data-action="inc" data-id="${item.id}">+</button>
+                </div>
+                <button class="pickup-btn" type="button" data-action="pickup" data-id="${item.id}" aria-label="Add ${escapeHtml(item.name)} to shopping pickups">
+                  <img class="action-icon" src="cart.png" alt="" />
+                </button>
+                <button class="icon-pencil-btn" type="button" data-action="details" data-id="${item.id}" aria-label="Edit ${escapeHtml(item.name)}">
+                  <img class="action-icon" src="edit.png" alt="" />
+                </button>
+              </div>
+
+              <div class="inline-edit-area ${expandedItemId === item.id ? "show" : ""}">
+                <div class="inventory-inline-grid">
+                  <input class="input-control" data-inline="name" data-id="${item.id}" type="text" value="${escapeHtml(item.name)}" />
+                  <input class="input-control" data-inline="category" data-id="${item.id}" type="text" value="${escapeHtml(item.category || "General")}" />
+                </div>
+                <div class="inventory-inline-grid" style="margin-top: 6px">
+                  <input class="input-control" data-inline="quantity" data-id="${item.id}" type="number" min="0.01" step="0.01" value="${formatQty(item.quantity)}" />
+                  <input class="input-control" data-inline="unit" data-id="${item.id}" type="text" value="${escapeHtml(item.unit)}" />
+                </div>
+                <div class="inventory-inline-grid" style="margin-top: 6px">
+                  <select class="input-control" data-inline="storage" data-id="${item.id}">
+                    <option value="room" ${item.storage === "room" ? "selected" : ""}>Room temp</option>
+                    <option value="fresh" ${item.storage === "fresh" ? "selected" : ""}>Keep fresh</option>
+                    <option value="freezer" ${item.storage === "freezer" ? "selected" : ""}>Freezer</option>
+                    <option value="other" ${item.storage === "other" ? "selected" : ""}>Other</option>
+                  </select>
+                  <div class="inventory-inline-actions">
+                    <button class="btn-secondary" type="button" data-action="cancel-inline" data-id="${item.id}" style="padding: 9px 10px">Cancel</button>
+                    <button class="btn-primary" type="button" data-action="save-inline" data-id="${item.id}" style="padding: 9px 10px; margin-top: 0">Save</button>
+                  </div>
+                </div>
+                <button class="inventory-delete" type="button" data-action="delete-inline" data-id="${item.id}" style="margin-top: 6px">Delete item</button>
+              </div>
+            </article>
+          `;
+          })
+          .join("");
+      }
+
+      function renderShoppingList() {
+        const container = document.getElementById("shoppingListContainer");
+        if (!container) return;
+
+        if (!appState.shoppingList.length) {
+          container.innerHTML =
+            '<p class="empty-state">Shopping list is clear.</p>';
+          return;
+        }
+
+        container.innerHTML = appState.shoppingList
+          .map(
+            (item) => `
+          <div class="shopping-item ${item.checked ? "checked" : ""}">
+            <div class="shopping-row">
+              <label>
+                <input type="checkbox" data-shopping-id="${item.id}" ${item.checked ? "checked" : ""} />
+                <div class="shopping-item-main">
+                  <strong>${escapeHtml(item.name)}</strong>
+                  <div class="inventory-item-meta">${formatQty(item.quantity)} ${escapeHtml(item.unit)} · ${escapeHtml(STORAGE_LABELS[item.storage] || "Other")}</div>
+                </div>
+              </label>
+              <button class="shopping-delete-btn" type="button" data-shopping-delete-id="${item.id}" aria-label="Remove ${escapeHtml(item.name)} from shopping pickups">×</button>
+              </div>
+          </div>
+        `,
+          )
+          .join("");
+      }
+
+      function upsertFromShopping(item) {
+        const match = appState.inventory.find(
+          (entry) =>
+            normalizeText(entry.name) === normalizeText(item.name) &&
+            normalizeText(entry.unit) === normalizeText(item.unit) &&
+            entry.storage === item.storage,
+        );
+
+        if (!match) {
+          appState.inventory.push({
+            id: createId(),
+            name: item.name,
+            quantity: Number(item.quantity),
+            unit: item.unit,
+            category: item.category || "General",
+            storage: item.storage,
+            lowStockAt: 1,
+          });
+          return;
+        }
+
+        match.quantity = Number(match.quantity) + Number(item.quantity);
+      }
+
+      function bindInventoryEvents() {
+        const searchInput = document.getElementById("inventorySearch");
+        const filters = document.getElementById("inventoryFilters");
+        const list = document.getElementById("inventoryGroups");
+        const addForm = document.getElementById("inventoryAddForm");
+        const addCancel = document.getElementById("inventoryAddCancelBtn");
+        const quickAddBtn = document.getElementById("inventoryQuickAddBtn");
+        const shoppingList = document.getElementById("shoppingListContainer");
+        const shoppingAddToggleBtn = document.getElementById(
+          "shoppingAddToggleBtn",
+        );
+        const shoppingAddPanel = document.getElementById("shoppingAddPanel");
+        const shoppingAddForm = document.getElementById("shoppingAddForm");
+        const shoppingAddCancelBtn = document.getElementById(
+          "shoppingAddCancelBtn",
+        );
+        const shoppingButton = document.getElementById(
+          "shoppingToInventoryBtn",
+        );
+
+        const clearShoppingAddForm = () => {
+          shoppingAddForm.reset();
+          document.getElementById("shoppingAddStorage").value = "room";
+        };
+
+        const toggleShoppingAddPanel = (open) => {
+          shoppingAddPanel.classList.toggle("show", open);
+        };
+
+        searchInput.addEventListener("input", () => {
+          renderInventory();
+        });
+
+        filters.addEventListener("click", (event) => {
+          const target = event.target;
+          if (!(target instanceof HTMLElement)) return;
+          const filter = target.dataset.filter;
+          if (!filter) return;
+          activeInventoryFilter = filter;
+          filters.querySelectorAll(".filter-chip").forEach((chip) => {
+            chip.classList.toggle("active", chip.dataset.filter === filter);
+          });
+          renderInventory();
+        });
+
+        quickAddBtn.addEventListener("click", () => {
+          toggleAddPanel(true);
+          document.getElementById("inventoryAddName").focus();
+        });
+
+        list.addEventListener("click", (event) => {
+          const target = event.target;
+          if (!(target instanceof HTMLElement)) return;
+          const actionTarget = target.closest("[data-action]");
+          if (!(actionTarget instanceof HTMLElement)) return;
+          if (!list.contains(actionTarget)) return;
+          const action = actionTarget.dataset.action;
+          const id = actionTarget.dataset.id;
+          if (!action || !id) return;
+
+          if (action === "dec") {
+            adjustQuantity(id, -1);
+            return;
+          }
+          if (action === "inc") {
+            adjustQuantity(id, 1);
+            return;
+          }
+          if (action === "pickup") {
+            const item = appState.inventory.find((entry) => entry.id === id);
+            if (!item) return;
+            addToShoppingPickups(item, 1);
+            saveInventoryState();
+            renderShoppingList();
+            showStatus(`${item.name} added to shopping pickups.`, "info");
+            return;
+          }
+          if (action === "details") {
+            expandedItemId = expandedItemId === id ? null : id;
+            renderInventory();
+            return;
+          }
+          if (action === "cancel-inline") {
+            expandedItemId = null;
+            renderInventory();
+            return;
+          }
+          if (action === "delete-inline") {
+            const selected = appState.inventory.find((item) => item.id === id);
+            appState.inventory = appState.inventory.filter(
+              (item) => item.id !== id,
+            );
+            if (expandedItemId === id) {
+              expandedItemId = null;
+            }
+            saveInventoryState();
+            renderInventory();
+            showStatus(
+              `${selected ? selected.name : "Item"} removed.`,
+              "warning",
+            );
+            return;
+          }
+          if (action === "save-inline") {
+            const nameInput = list.querySelector(
+              `[data-inline="name"][data-id="${id}"]`,
+            );
+            const categoryInput = list.querySelector(
+              `[data-inline="category"][data-id="${id}"]`,
+            );
+            const quantityInput = list.querySelector(
+              `[data-inline="quantity"][data-id="${id}"]`,
+            );
+            const unitInput = list.querySelector(
+              `[data-inline="unit"][data-id="${id}"]`,
+            );
+            const storageInput = list.querySelector(
+              `[data-inline="storage"][data-id="${id}"]`,
+            );
+            if (
+              !(nameInput instanceof HTMLInputElement) ||
+              !(categoryInput instanceof HTMLInputElement) ||
+              !(quantityInput instanceof HTMLInputElement) ||
+              !(unitInput instanceof HTMLInputElement) ||
+              !(storageInput instanceof HTMLSelectElement)
+            ) {
+              return;
+            }
+
+            const nextName = nameInput.value.trim();
+            const nextCategory = categoryInput.value.trim() || "General";
+            const nextQuantity = Number(quantityInput.value);
+            const nextUnit = unitInput.value.trim();
+            const nextStorage = storageInput.value;
+            if (
+              !nextName ||
+              !nextUnit ||
+              !Number.isFinite(nextQuantity) ||
+              nextQuantity <= 0
+            ) {
+              showStatus("Enter valid values before saving.", "warning");
+              return;
+            }
+
+            appState.inventory = appState.inventory.map((entry) =>
+              entry.id === id
+                ? {
+                    ...entry,
+                    name: nextName,
+                    category: nextCategory,
+                    quantity: nextQuantity,
+                    unit: nextUnit,
+                    storage: nextStorage,
+                  }
+                : entry,
+            );
+            expandedItemId = null;
+            saveInventoryState();
+            renderInventory();
+            showStatus(`${nextName} updated.`, "success");
+          }
+        });
+
+        addForm.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const name = document.getElementById("inventoryAddName").value.trim();
+          const quantity = Number(
+            document.getElementById("inventoryAddQuantity").value,
+          );
+          const unit = document.getElementById("inventoryAddUnit").value.trim();
+          const category =
+            document.getElementById("inventoryAddCategory").value.trim() ||
+            "General";
+          const storage = document.getElementById("inventoryAddStorage").value;
+
+          if (!name || !unit || !Number.isFinite(quantity) || quantity <= 0) {
+            showStatus("Enter a valid name, quantity, and unit.", "warning");
+            return;
+          }
+
+          appState.inventory.push({
+            id: createId(),
+            name,
+            quantity,
+            unit,
+            category,
+            storage,
+            lowStockAt: 1,
+          });
+          showStatus(`${name} added.`, "success");
+
+          saveInventoryState();
+          clearAddForm();
+          toggleAddPanel(false);
+          renderInventory();
+        });
+
+        addCancel.addEventListener("click", () => {
+          clearAddForm();
+          toggleAddPanel(false);
+        });
+
+        shoppingAddToggleBtn.addEventListener("click", () => {
+          toggleShoppingAddPanel(true);
+          document.getElementById("shoppingAddName").focus();
+        });
+
+        shoppingAddCancelBtn.addEventListener("click", () => {
+          clearShoppingAddForm();
+          toggleShoppingAddPanel(false);
+        });
+
+        shoppingAddForm.addEventListener("submit", (event) => {
+          event.preventDefault();
+          const name = document.getElementById("shoppingAddName").value.trim();
+          const quantity = Number(
+            document.getElementById("shoppingAddQuantity").value,
+          );
+          const unit = document.getElementById("shoppingAddUnit").value.trim();
+          const category =
+            document.getElementById("shoppingAddCategory").value.trim() ||
+            "General";
+          const storage = document.getElementById("shoppingAddStorage").value;
+
+          if (!name || !unit || !Number.isFinite(quantity) || quantity <= 0) {
+            showStatus(
+              "Enter a valid pickup item, quantity, and unit.",
+              "warning",
+            );
+            return;
+          }
+
+          addToShoppingPickups({ name, unit, category, storage }, quantity);
+          saveInventoryState();
+          renderShoppingList();
+          clearShoppingAddForm();
+          toggleShoppingAddPanel(false);
+          showStatus(`${name} added to shopping pickups.`, "success");
+        });
+
+        shoppingList.addEventListener("change", (event) => {
+          const target = event.target;
+          if (!(target instanceof HTMLInputElement)) return;
+          const shoppingId = target.dataset.shoppingId;
+          if (!shoppingId) return;
+
+          appState.shoppingList = appState.shoppingList.map((item) =>
+            item.id === shoppingId
+              ? { ...item, checked: target.checked }
+              : item,
+          );
+          saveInventoryState();
+          renderShoppingList();
+        });
+
+        shoppingList.addEventListener("click", (event) => {
+          const target = event.target;
+          if (!(target instanceof HTMLElement)) return;
+          const deleteTarget = target.closest("[data-shopping-delete-id]");
+          if (!(deleteTarget instanceof HTMLElement)) return;
+
+          const deleteId = deleteTarget.dataset.shoppingDeleteId;
+          if (!deleteId) return;
+
+          const selected = appState.shoppingList.find(
+            (item) => item.id === deleteId,
+          );
+          appState.shoppingList = appState.shoppingList.filter(
+            (item) => item.id !== deleteId,
+          );
+          saveInventoryState();
+          renderShoppingList();
+          showStatus(
+            `${selected ? selected.name : "Pickup item"} removed.`,
+            "warning",
+          );
+        });
+
+        shoppingButton.addEventListener("click", () => {
+          const checked = appState.shoppingList.filter((item) => item.checked);
+          if (!checked.length) {
+            showStatus("Select at least one shopping item first.", "warning");
+            return;
+          }
+
+          checked.forEach((item) => upsertFromShopping(item));
+          appState.shoppingList = appState.shoppingList.filter(
+            (item) => !item.checked,
+          );
+          saveInventoryState();
+          renderInventory();
+          renderShoppingList();
+          showStatus("Checked shopping items moved to inventory.", "success");
+        });
+      }
+
+      function completeSuggestedRecipe() {
+        const needed = [
+          { name: "Steak", quantity: 4, unit: "cuts" },
+          { name: "Potatoes", quantity: 6, unit: "left" },
+          { name: "Butter", quantity: 4, unit: "tbsp" },
+          { name: "Milk", quantity: 0.5, unit: "cups" },
+        ];
+        const missing = [];
+
+        needed.forEach((required) => {
+          const item = appState.inventory.find(
+            (entry) =>
+              normalizeText(entry.name) === normalizeText(required.name),
+          );
+          if (!item) {
+            missing.push(required.name);
+            return;
+          }
+          item.quantity = Number(item.quantity) - Number(required.quantity);
+          if (item.quantity <= 0) {
+            addToShoppingPickups(item, 1);
+            appState.inventory = appState.inventory.filter(
+              (entry) => entry.id !== item.id,
+            );
+          }
+        });
+
+        appState.recipeInProgress = false;
+        saveInventoryState();
+        renderInventory();
+
+        if (missing.length) {
+          showStatus(
+            `Recipe completed with missing items: ${missing.join(", ")}.`,
+            "warning",
+          );
+        } else {
+          showStatus(
+            "Recipe completed. Inventory was auto-deducted.",
+            "success",
+          );
+        }
+
+        closeCookingScreen();
+      }
+
+      function updateScreenScrollState(tab) {
+        const screen = document.querySelector(".screen");
+        const nutritionSection = document.getElementById("nutritionSection");
+        const familyExpanded = Boolean(
+          nutritionSection && nutritionSection.classList.contains("show-all"),
+        );
+        const shouldScroll =
+          tab === "inventory" || tab === "family" || familyExpanded;
+        screen.classList.toggle("screen-scroll-enabled", shouldScroll);
+      }
+
+      function openCookingScreen() {
+        appState.recipeInProgress = true;
+        saveInventoryState();
+        showStatus(
+          "Recipe started. Complete it to deduct ingredients automatically.",
+          "info",
+        );
+        document.getElementById("cookingScreen").classList.add("active");
+      }
+
+      function closeCookingScreen() {
+        document.getElementById("cookingScreen").classList.remove("active");
+      }
+
+      function toggleFamilyMembers() {
+        const nutritionSection = document.getElementById("nutritionSection");
+        const screen = document.querySelector(".screen");
+        const toggleButton = document.getElementById("familyToggle");
+        const isExpanded = nutritionSection.classList.toggle("show-all");
+        updateScreenScrollState(activeTab);
+        toggleButton.setAttribute("aria-expanded", String(isExpanded));
+        if (isExpanded) {
+          setTimeout(() => {
+            toggleButton.scrollIntoView({
+              block: "nearest",
+              behavior: "smooth",
+            });
+          }, 50);
+        } else {
+          screen.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }
+
+      // INTEGRATION NOTE: Overwritten switchTab to correctly map to the new recipesPanel
+      // instead of hard-redirecting to 'home' like the initial starter file did.
+      function switchTab(tab) {
+        const mainContent = document.getElementById("mainContent");
+        const inventoryPanel = document.getElementById("inventoryPanel");
+        const recipesPanel = document.getElementById("recipesPanel");
+        const familyScreen = document.getElementById("familyScreen");
+        const cookingScreen = document.getElementById("cookingScreen");
+        
+        activeTab = tab;
+        cookingScreen.classList.remove("active");
+
+        if (tab === "family") {
+          mainContent.classList.remove("active");
+          inventoryPanel.classList.remove("active");
+          if(recipesPanel) recipesPanel.classList.remove("active");
+          familyScreen.classList.add("family-screen-active");
+        } else if (tab === "inventory") {
+          mainContent.classList.remove("active");
+          inventoryPanel.classList.add("active");
+          if(recipesPanel) recipesPanel.classList.remove("active");
+          familyScreen.classList.remove("family-screen-active");
+        } else if (tab === "recipes") {
+          mainContent.classList.remove("active");
+          inventoryPanel.classList.remove("active");
+          if(recipesPanel) recipesPanel.classList.add("active");
+          familyScreen.classList.remove("family-screen-active");
+        } else {
+          mainContent.classList.add("active");
+          inventoryPanel.classList.remove("active");
+          if(recipesPanel) recipesPanel.classList.remove("active");
+          familyScreen.classList.remove("family-screen-active");
+        }
+        
+        document
+          .querySelectorAll(".nav-tab")
+          .forEach((t) => t.classList.remove("active-tab"));
+        const activeNode = document.getElementById("tab-" + tab);
+        if (activeNode) activeNode.classList.add("active-tab");
+        updateScreenScrollState(tab);
+      }
+
+      const notificationBell = document.getElementById("notificationBell");
+      const notificationModal = document.getElementById("notificationModal");
+      const closeModalBtn = document.getElementById("closeModalBtn");
+      const markReadBtn = document.getElementById("markReadBtn");
+      const alertBadge = document.querySelector(".alert-badge");
+      const viewInRecipesBtn = document.getElementById("viewInRecipesBtn");
+      const familyAvatarBtn = document.getElementById("familyAvatarBtn");
+
+      function closeNotificationModal() {
+        if (!notificationModal) return;
+        notificationModal.classList.remove("active");
+      }
+
+      if (notificationBell && notificationModal) {
+        notificationBell.addEventListener("click", () => {
+          notificationModal.classList.add("active");
+        });
+      }
+
+      if (closeModalBtn) {
+        closeModalBtn.addEventListener("click", closeNotificationModal);
+      }
+
+      if (notificationModal) {
+        notificationModal.addEventListener("click", (event) => {
+          if (event.target === notificationModal) {
+            closeNotificationModal();
+          }
+        });
+      }
+
+      if (markReadBtn) {
+        markReadBtn.addEventListener("click", () => {
+          if (alertBadge) {
+            alertBadge.style.display = "none";
+          }
+          closeNotificationModal();
+
+          const tempFeedback = document.createElement("div");
+          tempFeedback.textContent = "✓ All notifications marked as read";
+          tempFeedback.style.position = "absolute";
+          tempFeedback.style.bottom = "100px";
+          tempFeedback.style.left = "50%";
+          tempFeedback.style.transform = "translateX(-50%)";
+          tempFeedback.style.background = "#1f2937";
+          tempFeedback.style.color = "white";
+          tempFeedback.style.padding = "10px 20px";
+          tempFeedback.style.borderRadius = "30px";
+          tempFeedback.style.fontSize = "14px";
+          tempFeedback.style.zIndex = "200";
+          document.querySelector(".phone-frame")?.appendChild(tempFeedback);
+          setTimeout(() => tempFeedback.remove(), 2000);
+        });
+      }
+
+      if (viewInRecipesBtn) {
+        viewInRecipesBtn.addEventListener("click", () => {
+          switchTab("recipes");
+        });
+      }
+
+      if (familyAvatarBtn) {
+        familyAvatarBtn.addEventListener("click", () => {
+          switchTab("family");
+        });
+      }
+
+      document
+        .getElementById("memberModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) closeMemberModal();
+        });
+
+      // --- Recipes Tab JS Filtering Logic Integration ---
+      let filters = { protein: [], meal: [], cuisine: [], time: [] };
+
+      function toggleSidebar(header) {
+        const parent = header.parentElement;
+        const isOpen = parent.classList.contains('open');
+        document.querySelectorAll('.recipes-panel .category-item').forEach(i => i.classList.remove('open'));
+        if (!isOpen) parent.classList.add('open');
+      }
+
+      function toggleFilter(category, tag, element) {
+        const index = filters[category].indexOf(tag);
+        if (index > -1) {
+          filters[category].splice(index, 1);
+          element.classList.remove('active-filter');
+        } else {
+          filters[category].push(tag);
+          element.classList.add('active-filter');
+        }
+        
+        const totalActive = Object.values(filters).flat().length;
+        document.getElementById('allRecipesBtn').classList.toggle('active-filter', totalActive === 0);
+        updatePills();
+        applyFilters();
+      }
+
+      function clearAllFilters() {
+        filters = { protein: [], meal: [], cuisine: [], time: [] };
+        document.querySelectorAll('.recipes-panel .sub-item').forEach(el => el.classList.remove('active-filter'));
+        document.getElementById('allRecipesBtn').classList.add('active-filter');
+        
+        const searchInput = document.getElementById('recipeSearchInput');
+        if (searchInput) {
+          searchInput.value = '';
+        }
+
+        updatePills();
+        applyFilters();
+      }
+
+      function updatePills() {
+        const container = document.getElementById('activePills');
+        if(!container) return;
+        container.innerHTML = '';
+        Object.keys(filters).forEach(cat => {
+          filters[cat].forEach(tag => {
+            const pill = document.createElement('div');
+            pill.className = 'pill';
+            pill.innerHTML = `${tag} <i class="bi bi-x-circle-fill" style="cursor:pointer" onclick="removeTag('${cat}', '${tag}')"></i>`;
+            container.appendChild(pill);
+          });
+        });
+      }
+
+      function removeTag(cat, tag) {
+        const items = document.querySelectorAll(`[data-cat="${cat}"] .sub-item`);
+        items.forEach(item => {
+          if (item.getAttribute('onclick').includes(`'${tag}'`)) {
+            toggleFilter(cat, tag, item);
+          }
+        });
+      }
+
+      function applyFilters() {
+        const searchInput = document.getElementById('recipeSearchInput');
+        if(!searchInput) return;
+        const search = searchInput.value.toLowerCase();
+        const cards = document.querySelectorAll('#recipeGrid .recipe-card');
+        
+        cards.forEach(card => {
+          const title = card.querySelector('h3').innerText.toLowerCase();
+          const tags = card.getAttribute('data-tags');
+          
+          const matchesFilters = Object.keys(filters).every(cat => {
+            if (filters[cat].length === 0) return true;
+            return filters[cat].some(tag => tags.includes(tag));
+          });
+
+          const matchesSearch = title.includes(search);
+          card.style.display = (matchesFilters && matchesSearch) ? "flex" : "none";
+        });
+      }
+
+      // --- Pantry Chef Logic ---
+      function openPantryChef() {
+        const listContainer = document.getElementById('pantrySelectionList');
+        
+        if (appState.inventory.length === 0) {
+          listContainer.innerHTML = '<p class="empty-state">Your inventory is empty.</p>';
+        } else {
+          // Generate checkboxes and quantity inputs for inventory items
+          listContainer.innerHTML = appState.inventory.map(item => `
+            <div class="shopping-item" style="margin-bottom: 8px; align-items: center; gap: 8px;">
+              <div class="shopping-row" style="flex: 1;">
+                <label style="cursor: pointer; display: flex; align-items: center; width: 100%;">
+                  <input type="checkbox" class="pantry-checkbox" id="cb-${item.id}" value="${escapeHtml(item.name)}" 
+                        style="width: 18px; height: 18px; flex-shrink: 0;" 
+                        onchange="document.getElementById('qty-${item.id}').disabled = !this.checked;" />
+                  <div class="shopping-item-main" style="margin-left: 12px; flex: 1;">
+                    <strong>${escapeHtml(item.name)}</strong>
+                    <div class="inventory-item-meta">In stock: ${formatQty(item.quantity)}</div>
+                  </div>
+                </label>
+              </div>
+              
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <input type="number" id="qty-${item.id}" class="input-control pantry-qty" 
+                      min="0.01" max="${item.quantity}" step="any" value="1" disabled 
+                      style="width: 65px; padding: 6px; text-align: center; font-weight: 600;" />
+                <span style="font-size: 0.8rem; color: var(--text-secondary); width: 35px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  ${escapeHtml(item.unit)}
+                </span>
+              </div>
+            </div>
+          `).join('');
+        }
+
+        // Reset the time dropdown every time it opens
+        const timeSelect = document.getElementById('pantryTimeLimit');
+        if(timeSelect) timeSelect.value = "any";
+
+        document.getElementById('pantryChefScreen').classList.add('active');
+      }
+
+      function closePantryChef() {
+        document.getElementById('pantryChefScreen').classList.remove('active');
+      }
+
+      function findRecipeFromSelection() {
+        const selectedBoxes = document.querySelectorAll('.pantry-checkbox:checked');
+        if (selectedBoxes.length === 0) {
+          showStatus("Please select at least one ingredient.", "warning");
+          return;
+        }
+        const timeLimit = document.getElementById('pantryTimeLimit').value;
+        
+        // Extract the ingredients and their quantities (ready for backend/logic processing)
+        const selectedIngredients = Array.from(selectedBoxes).map(cb => {
+          const id = cb.id.replace('cb-', '');
+          const qtyInput = document.getElementById(`qty-${id}`);
+          return {
+            name: cb.value,
+            quantity: qtyInput ? qtyInput.value : 1
+          };
+        });
+
+        closePantryChef();
+
+        switchTab('recipes');
+
+        const searchInput = document.getElementById('recipeSearchInput');
+        if (searchInput) {
+          searchInput.value = "Steak & mashed potatoes";
+          applyFilters(); 
+        }
+
+        let timeMsg = timeLimit !== 'any' ? ` under ${timeLimit.replace('min', ' minutes')}` : '';
+        showStatus(`Found recipes using ${selectedIngredients.length} ingredient(s)${timeMsg}!`, "success");
+      }
+
+      // Init app calls
+      bindInventoryEvents();
+      renderInventory();
+      renderShoppingList();
+      clearAddForm();
+      toggleAddPanel(false);
+      updateScreenScrollState("home");
+      renderFamily();
+      renderHome();
+    </script>
+  </body>
+</html>
